@@ -9481,7 +9481,7 @@ void *stratifier(void *arg)
 		}
 
 		for (int i = 0; i < DONATION_NUM_ADDRESSES; ++i) {
-			if (generator_checkaddr(ckp, ckp->dev_donations[i].address, &ckp->dev_donations[i].isscript) {
+			if (generator_checkaddr(ckp, ckp->dev_donations[i].address, &ckp->dev_donations[i].isscript)) {
 				ckp->dev_donations[i].valid = true;
 				sdata->donation_data[i].txnlen =
 					address_to_txn(sdata->donation_data[i].txnbin, ckp->dev_donations[i].address,
