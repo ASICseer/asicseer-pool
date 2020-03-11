@@ -24,6 +24,7 @@
 
 #include "cashaddr.h"
 #include "ckpool.h"
+#include "donation.h"
 #include "libckpool.h"
 #include "bitcoin.h"
 #include "sha2.h"
@@ -464,8 +465,10 @@ struct stratifier_data {
 
 	char txnbin[48];
 	int txnlen;
-	char dontxnbin[48];
-	int dontxnlen;
+	struct {
+		char txnbin[48];
+		int txnlen;
+	} donation_data[DONATION_NUM_ADDRESSES];
 
 	pool_stats_t stats;
 	/* Protects changes to pool stats */
@@ -2716,8 +2719,10 @@ static sdata_t *duplicate_sdata(const sdata_t *sdata)
 	dsdata->ckp = sdata->ckp;
 
 	/* Copy the transaction binaries for workbase creation */
-	memcpy(dsdata->txnbin, sdata->txnbin, 48);
-	memcpy(dsdata->dontxnbin, sdata->dontxnbin, 48);
+	memcpy(dsdata->txnbin, sdata->txnbin, 48); // FIXME: why are we not copying txnlen? -Calin
+	for (int i = 0; i < DONATION_NUM_ADDRESSES; ++i) {
+		memcpy(dsdata->donation_data[i].txnbin, sdata->donation_data[i].txnbin, 48); // FIXME: why are we not copy txnlen? -Calin
+	}
 
 	/* Use the same work queues for all subproxies */
 	dsdata->ssends = sdata->ssends;
@@ -9416,13 +9421,17 @@ static bool get_chain_and_prefix(ckpool_t *ckp)
 	assert(len > strlen(CASHADDR_PREFIX_MAIN));
 	if (! generator_get_chain(ckp, ckp->chain))
 		return false;
-	if (!strcmp(ckp->chain, "test")) // testnet
+	if (!strcmp(ckp->chain, "test")) { // testnet
 		strncpy(ckp->cashaddr_prefix, CASHADDR_PREFIX_TEST, len);
-	else if (!strcmp(ckp->chain, "regtest")) // regtest
+		ckp->not_mainnet = true;
+	} else if (!strcmp(ckp->chain, "regtest")) { // regtest
 		strncpy(ckp->cashaddr_prefix, CASHADDR_PREFIX_REGTEST, len);
-	else
+		ckp->not_mainnet = true;
+	} else {
 		// default to mainnet
 		strncpy(ckp->cashaddr_prefix, CASHADDR_PREFIX_MAIN, len);
+		ckp->not_mainnet = false;
+	}
 	if (likely(len))
 		ckp->cashaddr_prefix[len-1] = 0; // ensure NUL termination
 
@@ -9467,19 +9476,22 @@ void *stratifier(void *arg)
 		hex2bin(scriptsig_header_bin, scriptsig_header, 41);
 		sdata->txnlen = address_to_txn(sdata->txnbin, ckp->bchaddress, ckp->script, ckp->cashaddr_prefix);
 		if (!sdata->txnlen) {
-			quit(1, "Failed to parse pool address '%s'. FIXME!", ckp->bchaddress);
+			LOGEMERG("Failed to parse pool address '%s'. FIXME!", ckp->bchaddress);
+			goto out;
 		}
 
-#if 0
-		/* FIXME Donation is currently disabled. Donvalid will be false */
-		if (generator_checkaddr(ckp, ckp->donaddress, &ckp->donscript)) {
-			ckp->donvalid = true;
-			sdata->dontxnlen = address_to_txn(sdata->txnbin, ckp->donaddress, ckp->donscript);
-			if (!sdata->dontxnlen) {
-				quit(1, "Failed to parse donation address '%s'. FIXME!", ckp->donaddress);
+		for (int i = 0; i < DONATION_NUM_ADDRESSES; ++i) {
+			if (generator_checkaddr(ckp, ckp->dev_donations[i].address, &ckp->dev_donations[i].isscript) {
+				ckp->dev_donations[i].valid = true;
+				sdata->donation_data[i].txnlen =
+					address_to_txn(sdata->donation_data[i].txnbin, ckp->dev_donations[i].address,
+					               ckp->dev_donations[i].isscript);
+				if (!sdata->donation_data[i].txnlen) {
+					LOGEMERG("Failed to parse donation address '%s'. FIXME!", ckp->dev_donations[i].address);
+					goto out;
+				}
 			}
 		}
-#endif
 	}
 
 	randomiser = time(NULL);
