@@ -10,7 +10,4 @@
 #define DONATION_ADDRESS_BCHN "bchtest:qqhmdlmsyp20naq63tmhvgcvth5cncvv850xz5etd0"/*"3NoBpEBHZq6YqwUBdPAMW41w5BTJSC7yuQ"*/  // BCHN donation wallet
 #define DONATION_NUM_ADDRESSES 2
 
-#define DONATION_CALIN_ENABLED 1
-#define DONATION_BCHN_ENABLED 1
-
 #endif
