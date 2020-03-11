@@ -9485,7 +9485,7 @@ void *stratifier(void *arg)
 				ckp->dev_donations[i].valid = true;
 				sdata->donation_data[i].txnlen =
 					address_to_txn(sdata->donation_data[i].txnbin, ckp->dev_donations[i].address,
-					               ckp->dev_donations[i].isscript);
+					               ckp->dev_donations[i].isscript, ckp->cashaddr_prefix);
 				if (!sdata->donation_data[i].txnlen) {
 					LOGEMERG("Failed to parse donation address '%s'. FIXME!", ckp->dev_donations[i].address);
 					goto out;
