@@ -1799,23 +1799,6 @@ retry:
 	 * for user generation transactions */
 	txns = wb_merkle_bin_txns(ckp, sdata, wb, txn_array, true);
 
-
-#if 0 // This block currently a no-op. Was here for segwit support but removed for BCH.
-	{
-		json_t *rules_array = json_object_get(wb->json, "rules");
-		if (rules_array) {
-			int rule_count = json_array_size(rules_array);
-
-			for (i = 0; i < rule_count; i++) {
-				const char *rule = json_string_value(json_array_get(rules_array, i));
-				if (!rule)
-					continue;
-				if (*rule == '!')
-					rule++;
-			}
-		}
-	}
-#endif
 	generate_coinbase(ckp, wb);
 
 	add_base(ckp, sdata, wb, &new_block);
