@@ -2745,7 +2745,7 @@ static sdata_t *duplicate_sdata(const sdata_t *sdata)
 	/* Copy the transaction binaries for workbase creation */
 	memcpy(dsdata->txnbin, sdata->txnbin, 48); // FIXME: why are we not copying txnlen? -Calin
 	for (int i = 0; i < DONATION_NUM_ADDRESSES; ++i) {
-		memcpy(dsdata->donation_data[i].txnbin, sdata->donation_data[i].txnbin, 48); // FIXME: why are we not copy txnlen? -Calin
+		memcpy(dsdata->donation_data[i].txnbin, sdata->donation_data[i].txnbin, 48); // FIXME: why are we not copying txnlen? -Calin
 	}
 
 	/* Use the same work queues for all subproxies */
