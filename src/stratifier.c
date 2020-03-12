@@ -5381,7 +5381,13 @@ static json_t *parse_subscribe(stratum_instance_t *client, const int64_t client_
 			n2len);
 	ck_runlock(&sdata->workbase_lock);
 
-	__client_apply_mindiff_override(client); // set suggested_diff if any overrides defined for client based on useragent
+	// Apply any mindiff_overrides from config here.
+	// This sets client->suggest_diff, and initial client->diff, if any overrides match for this client
+	// (based on useragent).
+	// Known issue here: It's assumed the client sends mining.subscribe after initial connect.
+	// This call here won't spam a new difficulty change notification message, since the normal
+	// call path will send the initial difficulty message in init_client() later anyway. -Calin
+	__client_apply_mindiff_override(client);
 
 	client->subscribed = true;
 
