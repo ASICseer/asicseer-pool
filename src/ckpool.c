@@ -1474,7 +1474,6 @@ static void parse_mindiff_overrides(ckpool_t *ckp, json_t *obj, const size_t n_k
 		if (mindiff > 0 && useragent && *useragent) {
 			arr[n_ok].useragent = strdup(useragent);
 			arr[n_ok].mindiff = mindiff;
-			LOGDEBUG("mindiff_overrides: parsed \"%s\" mindiff %"PRId64, arr[n_ok].useragent, arr[n_ok].mindiff);
 			++n_ok;
 		}  else {
 			LOGWARNING("mindiff_overrides: failed to parse \"%s\", expected numeric value > 0", useragent ? : "");
@@ -1490,6 +1489,13 @@ static void parse_mindiff_overrides(ckpool_t *ckp, json_t *obj, const size_t n_k
 			// realloc failure on startup.. this can't be good -- just re-use array.
 			ckp->mindiff_overrides = arr;
 		ckp->n_mindiff_overrides = n_ok;
+		// debug sanity check, print out to log what we parsed
+		for (size_t i = 0; i < n_ok; ++i) {
+			LOGDEBUG("mindiff_overrides: parsed \"%s\" mindiff %"PRId64,
+			         ckp->mindiff_overrides[i].useragent,
+			         ckp->mindiff_overrides[i].mindiff);
+		}
+		LOGDEBUG("mindiff_overrides: %d overrides will be applied to clients on mining.subscribe", (int)ckp->n_mindiff_overrides);
 	} else
 		dealloc(arr); // none parsed, just free memory for the pre-allocated array.
 }
