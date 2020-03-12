@@ -1495,7 +1495,7 @@ static void parse_mindiff_overrides(ckpool_t *ckp, json_t *obj, const size_t n_k
 			         ckp->mindiff_overrides[i].useragent,
 			         ckp->mindiff_overrides[i].mindiff);
 		}
-		LOGDEBUG("mindiff_overrides: %d overrides will be applied to clients on mining.subscribe", (int)ckp->n_mindiff_overrides);
+		LOGDEBUG("mindiff_overrides: %d override(s) parsed ok", (int)ckp->n_mindiff_overrides);
 	} else
 		dealloc(arr); // none parsed, just free memory for the pre-allocated array.
 }
