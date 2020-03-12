@@ -5263,6 +5263,8 @@ static void __client_apply_mindiff_override(stratum_instance_t *client)
 		const mindiff_override_t * const ovr = ckp->mindiff_overrides + i;
 		if (ovr->mindiff <= ckp->mindiff)
 			continue; // ignore mindiff overrides below global minimum
+		if (ckp->maxdiff > 0 && ovr->mindiff > ckp->maxdiff)
+			continue; // ignore mindiff overrides above global maximum
 		if (0 == strncasecmp(client->useragent, ovr->useragent, ovr->ualen)) {
 			// match, apply suggested_diff to client, which will clamp
 			// the minimum difficulty for this client for all workers to be >= ovr->mindiff
