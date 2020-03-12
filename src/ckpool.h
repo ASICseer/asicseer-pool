@@ -130,12 +130,12 @@ struct server_instance {
 
 typedef struct server_instance server_instance_t;
 
-// Overrides for client mindiff and startdiff, applied based on useranget string from mining.subscribe.
+// Overrides for client mindiff and startdiff, applied based on useragent string from mining.subscribe.
 typedef struct mindiff_override {
 	/* If a client's useragent starts with this string (case insensitive),  then we apply the override. */
 	const char *useragent; // NB: in this program this is a malloc'd string owned by this object
 	size_t ualen; // strlen(useragent), cached so we don't have to recompute it each time
-	/* This override also affects client  startdiff iff > ckp->startdiff. */
+	/* This override is applied if it's >= global mindiff, it affects client starting difficulty and minimum difficulty. */
 	int64_t mindiff;
 } mindiff_override_t;
 
