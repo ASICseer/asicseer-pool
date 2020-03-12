@@ -5267,7 +5267,7 @@ static void __client_apply_mindiff_override(stratum_instance_t *client)
 			// match, apply suggested_diff to client, which will clamp
 			// the minimum difficulty for this client for all workers to be >= ovr->mindiff
 			client->suggest_diff = client->old_diff = client->diff = ovr->mindiff;
-			LOGDEBUG("Applied mindiff_override = %"PRId64" to client %"PRId64" matching \"%s\"", ovr->mindiff, client->id, ovr->useragent);
+			LOGDEBUG("mindiff_overrides: Applied minimum difficulty = %"PRId64" to client %"PRId64" matching \"%s\"", ovr->mindiff, client->id, ovr->useragent);
 			return;
 		}
 	}
