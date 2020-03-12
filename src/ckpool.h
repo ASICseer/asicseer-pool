@@ -130,6 +130,14 @@ struct server_instance {
 
 typedef struct server_instance server_instance_t;
 
+// Overrides for client mindiff and startdiff, applied based on useranget string from mining.subscribe.
+typedef struct mindiff_override {
+	/* If a client's useragent starts with this string (case insensitive),  then we apply the override. */
+	const char *useragent; // NB: in this program this is a malloc'd string owned by this object
+	/* This override also affects client  startdiff iff > ckp->startdiff. */
+	int64_t mindiff;
+} mindiff_override_t;
+
 struct ckpool_instance {
 	/* Start time */
 	time_t starttime;
@@ -242,6 +250,9 @@ struct ckpool_instance {
 	int64_t mindiff; // Default 1
 	int64_t startdiff; // Default 42
 	int64_t maxdiff; // No default
+
+	const mindiff_override_t *miniff_overrides; // Taken from top-level "mindiff_overrides" : { ... } in config.
+	size_t n_mindiff_overrides; // The number of mindiff_override in the above array. Will be 0 if array is NULL.
 
 	/* Which chain are we on: "main", "test", or "regtest". Defaults to "main" but may be read
 	   from bitcoind and updated if !proxy instance.
