@@ -1473,6 +1473,7 @@ static void parse_mindiff_overrides(ckpool_t *ckp, json_t *obj, const size_t n_k
 			mindiff = json_real_value(jval);
 		if (mindiff > 0 && useragent && *useragent) {
 			arr[n_ok].useragent = strdup(useragent);
+			arr[n_ok].ualen = strlen(arr[n_ok].useragent); // cache strlen to save cycles later
 			arr[n_ok].mindiff = mindiff;
 			++n_ok;
 		}  else {

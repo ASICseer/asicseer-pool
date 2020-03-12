@@ -134,6 +134,7 @@ typedef struct server_instance server_instance_t;
 typedef struct mindiff_override {
 	/* If a client's useragent starts with this string (case insensitive),  then we apply the override. */
 	const char *useragent; // NB: in this program this is a malloc'd string owned by this object
+	size_t ualen; // strlen(useragent), cached so we don't have to recompute it each time
 	/* This override also affects client  startdiff iff > ckp->startdiff. */
 	int64_t mindiff;
 } mindiff_override_t;
