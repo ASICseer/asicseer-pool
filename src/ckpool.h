@@ -251,7 +251,7 @@ struct ckpool_instance {
 	int64_t startdiff; // Default 42
 	int64_t maxdiff; // No default
 
-	const mindiff_override_t *miniff_overrides; // Taken from top-level "mindiff_overrides" : { ... } in config.
+	const mindiff_override_t *mindiff_overrides; // Taken from top-level "mindiff_overrides" : { ... } in config.
 	size_t n_mindiff_overrides; // The number of mindiff_override in the above array. Will be 0 if array is NULL.
 
 	/* Which chain are we on: "main", "test", or "regtest". Defaults to "main" but may be read
