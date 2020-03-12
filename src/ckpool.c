@@ -1483,8 +1483,7 @@ static void parse_mindiff_overrides(ckpool_t *ckp, json_t *obj, const size_t n_k
 	if (n_ok) {
 		// Save info to ckp struct. Note we are being stingy with memory here and we realloc
 		// the array to the smaller size, just to be tidy.
-		const size_t nbytes = sizeof(mindiff_override_t) * n_ok;
-		ckp->mindiff_overrides = realloc(arr, nbytes);
+		ckp->mindiff_overrides = realloc(arr, sizeof(mindiff_override_t) * n_ok);
 		if (unlikely(!ckp->mindiff_overrides))
 			// realloc failure on startup.. this can't be good -- just re-use array.
 			ckp->mindiff_overrides = arr;
