@@ -10,7 +10,7 @@
  * any later version.  See COPYING for more details.
  */
 
-#include "ckdb.h"
+#include "asicseer-db.h"
 
 /* This code's lock implementation is equivalent to table level locking
  * Consider adding row level locking (a per kitem usage count) if needed
@@ -30,7 +30,7 @@
  * The threads that can be managed have a command option to set them when
  *  starting ckdb and can also be changed via the cmd_threads socket command
  *
- * The main() 'ckdb' thread starts:
+ * The main() 'asicseer-db' thread starts:
  *	iomsgs() for filelog '_fiomsgs' and console '_ciomsgs'
  *	listener() '_p00qproc'
  *		which manages it's thread count in pqproc()
@@ -247,7 +247,7 @@ const char *hashpatt = "^[A-Fa-f0-9]*$";
 /* BCH Legacy addresses start with '1' (one) or '3' (three),
  *  exclude: capital 'I' (eye), capital 'O' (oh),
  *  lowercase 'l' (elle) and '0' (zero)
- *  and with a simple test must be ADDR_MIN_LEN to ADDR_MAX_LEN (ckdb.h)
+ *  and with a simple test must be ADDR_MIN_LEN to ADDR_MAX_LEN (asicseer-db.h)
  * Additionally we support CashAddr by matching on that character set as well, with the optional prefix.
  * bitcoind is used to fully validate them when required */
 const char *addrpatt =
@@ -3384,11 +3384,11 @@ static bool update_seq(enum seq_num seq, uint64_t n_seqcmd,
 		 * The (very unlikely) side effect would be that it could miss
 		 *  spotting lost sequence numbers: between the maxseq of a set
 		 *  in the reload, and the base of the same set in the queue
-		 * The fix is simply to stop ckdb immediately if ckpool is
+		 * The fix is simply to stop asicseer-db immediately if asicseer-pool is
 		 *  constantly failing (SEQ_MAX times during the reload) and
-		 *  restart ckdb when ckpool isn't aborting, or if ckpool is
-		 *  in a problematic state, start ckdb while ckpool isn't
-		 *  running, then start ckpool when ckdb completes it's full
+		 *  restart asicseer-db when asicseer-pool isn't aborting, or if asicseer-pool is
+		 *  in a problematic state, start asicseer-db while asicseer-pool isn't
+		 *  running, then start asicseer-pool when asicseer-db completes it's full
 		 *  startup */
 		K_ITEM *ss_item;
 		SEQSET *ss = NULL;
@@ -3477,11 +3477,11 @@ gotseqset:
 			 *  until it catches up to the corrupt seq number
 			 *  Currently the only fix to get rid of the console
 			 *   messages is to fix/remove the corrupt high
-			 *   msgline from the reload data and restart ckdb
-			 *   You would have to stop ckdb first if it is in the
+			 *   msgline from the reload data and restart asicseer-db
+			 *   You would have to stop asicseer-db first if it is in the
 			 *    current hour reload file
 			 *  Note of course if it came from the queue it will
-			 *   be in the reload data when you restart ckdb */
+			 *   be in the reload data when you restart asicseer-db */
 			if ((seqentryflags & SE_RELOAD) ||
 			    (seqdata->maxseq == seqdata->reloadmax))
 				okhi = true;
@@ -3722,7 +3722,7 @@ setitemdata:
 		 * Technically SE_SOCKET is unexpected, except that at the end
 		 *  of the reload sync there may still be pool messages that
 		 *  haven't got into the queue yet - it wouldn't be expected
-		 *  for there to be many since it would be ckdb emptying the
+		 *  for there to be many since it would be asicseer-db emptying the
 		 *  queue faster than it is filling due to the reload delay -
 		 *  but either way they don't need to be reported */
 		if (((seqentry_copy.flags | seqentryflags) & SE_RELOAD) &&
@@ -4016,8 +4016,8 @@ static void setup_seq(K_ITEM *seqall, MSGLINE *msgline)
 		msgline->n_seqstt = atol(transfer_data(seqstt));
 
 	/* Ignore SEQSTTIGN sequence information
-	 * This allows us to manually generate ckpool data and send it
-	 *  to ckdb using ckpmsg - if SEQSTT == SEQSTTIGN
+	 * This allows us to manually generate asicseer-pool data and send it
+	 *  to asicseer-db using asicseer-pmsg - if SEQSTT == SEQSTTIGN
 	 * SEQALL must exist but the value is ignored
 	 * SEQPID and SEQcmd don't need to exist and are ignored */
 	if (msgline->n_seqstt == SEQSTTIGN) {
@@ -4148,7 +4148,7 @@ static enum cmd_values breakdown(K_ITEM **ml_item, char *buf, tv_t *now,
 		goto nogood;
 	}
 
-	/* If you want to manually replay a log file with ckpmsg,
+	/* If you want to manually replay a log file with asicseer-pmsg,
 	 *  you can ignore the access failed items by skipping items
 	 *  that start with a capital, since all (currently) are lower case
 	 *  however, command checks are case insensitive, so replaying
@@ -5209,7 +5209,7 @@ static void *summariser(__maybe_unused void *arg)
 	/* Don't do any summarisation until the reload queue completes coz:
 	 * 1) It locks/accesses a lot of data - workinfo/markersummary that
 	 *    can slow down the reload
-	 * 2) If you stop and restart ckdb this wont affect the restart point
+	 * 2) If you stop and restart asicseer-db this wont affect the restart point
 	 *    Thus it's OK to do it later
 	 * 3) It does I/O to bitcoind which is slow ...
 	 * 4) It triggers the payout generation which also accesses a lot of
@@ -5348,7 +5348,7 @@ static void make_a_shift_mark()
 		DATA_WORKINFO_NULL(workinfo, wi_item);
 		if (!wi_item) {
 			K_RUNLOCK(workinfo_free);
-			LOGWARNING("%s() ckdb workinfo:'%s' marks:'%s' ..."
+			LOGWARNING("%s() "PROG_PREFIX"db workinfo:'%s' marks:'%s' ..."
 				   " start "POOL_PROGNAME"!", __func__,
 				   "none", m_item ? "expired" : "none");
 			return;
@@ -5359,7 +5359,7 @@ static void make_a_shift_mark()
 		}
 		if (!wi_item) {
 			K_RUNLOCK(workinfo_free);
-			LOGWARNING("%s() ckdb workinfo:'%s' marks:'%s' ..."
+			LOGWARNING("%s() "PROG_PREFIX"db workinfo:'%s' marks:'%s' ..."
 				   " start "POOL_PROGNAME"!", __func__,
 				   "expired", m_item ? "expired" : "none");
 			return;
@@ -5803,7 +5803,7 @@ static void *marker(__maybe_unused void *arg)
 	 *  always have to go back to the same reload point as before due to
 	 *  no new workmarkers being completed/processed
 	 * However, don't start during the first N reload files so that a
-	 *  normal ckdb restart reload won't slow down */
+	 *  normal asicseer-db restart reload won't slow down */
 	while (!everyone_die && !reloaded_N_files && !reload_queue_complete)
 		cksleep_ms(42);
 
@@ -6017,7 +6017,7 @@ static void *replier(void *arg)
 				cksleep_ms(1000);
 			else {
 				// Abort on 10 consecutive fails or 100 total
-				quithere(1, "%c aborting ckdb: epoll_wait "
+				quithere(1, "%c aborting "PROG_PREFIX"db: epoll_wait "
 					 "(%d/%d) failed (%d:%s)",
 					 typ, fails, fails_tot,
 					 e, strerror(e));
@@ -6531,7 +6531,7 @@ static void *process_socket(__maybe_unused void *arg)
 			case CMD_TERMINATE:
 				LOGWARNING("Listener received"
 					   " terminate message,"
-					   " terminating ckdb");
+					   " terminating "PROG_PREFIX"db");
 				snprintf(reply, sizeof(reply),
 					 "%s.%ld.ok.exiting",
 					 msgline->id,
@@ -8198,7 +8198,7 @@ static void *listener(__maybe_unused void *arg)
 			   ooo_status(ooo_buf, sizeof(ooo_buf)));
 		sequence_report(true);
 
-		LOGWARNING("%s(): ckdb ready, pool queue %d (%d/%d/%d/%d/%d)",
+		LOGWARNING("%s(): "PROG_PREFIX"db ready, pool queue %d (%d/%d/%d/%d/%d)",
 			   __func__, bq+bqp+bqd+wq0count+wqcount,
 			   bq, bqp, bqd, wq0count, wqcount);
 
@@ -9201,7 +9201,7 @@ static struct option long_options[] = {
 	{ "generate",		no_argument,		0,	'g' },
 	{ "help",		no_argument,		0,	'h' },
 	{ "pool-instance",	required_argument,	0,	'i' },
-	// only use 'I' for reloading lots of known valid data via CKDB,
+	// only use 'I' for reloading lots of known valid data via asicseer-db,
 	// DON'T use when connected to ckpool
 	{ "ignore-seq",		required_argument,	0,	'I' },
 	{ "killold",		no_argument,		0,	'k' },
@@ -9263,7 +9263,7 @@ int main(int argc, char **argv)
 
 	setnow(&ckdb_start);
 
-	printf("CKDB Master V%s (C) Kano (see source code)\n", CKDB_VERSION);
+	printf("ASICseer-DB Master V%s (C) Kano & ASICseer (see source code)\n", CKDB_VERSION);
 
 	feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
 
@@ -9285,7 +9285,7 @@ int main(int argc, char **argv)
 			case 'a':
 				len = strlen(optarg);
 				if (len > MAX_ALERT_CMD)
-					quit(1, "ckdb_alert_cmd (%d) too large,"
+					quit(1, PROG_PREFIX"db_alert_cmd (%d) too large,"
 						" limit %d",
 						(int)len, MAX_ALERT_CMD);
 				ckdb_alert_cmd = strdup(optarg);

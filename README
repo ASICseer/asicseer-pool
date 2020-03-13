@@ -135,8 +135,8 @@ make
 Binaries will be built in the src/ subdirectory. Binaries generated will be:
 asicseer-pool - The main pool back end
 asicseer-db - The pool's database
-ckpmsg - An application for passing messages in libasicseerpool format to
-         asicseer-pool/asicseer-db
+asicseer-pmsg - An application for passing messages in libasicseerpool format
+                to asicseer-pool/asicseer-db
 notifier - An application designed to be run with bitcoind's -blocknotify to
 	         notify asicseer-pool of block changes.
 

@@ -119,7 +119,7 @@ int get_line(char **buf)
 	*buf = NULL;
 
 	/* If we're not reading from a terminal, parse lines at a time allowing
-	 * us to script usage of ckpmsg */
+	 * us to script usage of asicseer-pmsg */
 	if (!isatty(fileno((FILE *)stdin))) do {
 		size_t n;
 

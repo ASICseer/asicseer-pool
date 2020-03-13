@@ -9,7 +9,7 @@
  * any later version.  See COPYING for more details.
  */
 
-#include "ckdb.h"
+#include "asicseer-db.h"
 
 /*
  * Allow overriding the username however the username must still be present
