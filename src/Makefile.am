@@ -23,10 +23,10 @@ libckpool_a_SOURCES = libckpool.c libckpool.h sha2.c sha2.h cashaddr.c cashaddr.
 libckpool_a_LIBADD = $(native_objs)
 
 bin_PROGRAMS = asicseer-pool ckpmsg notifier summariser
-asicseer-pool_SOURCES = asicseer-pool.c asicseer-pool.h generator.c generator.h bitcoin.c bitcoin.h \
+asicseer_pool_SOURCES = asicseer-pool.c asicseer-pool.h generator.c generator.h bitcoin.c bitcoin.h \
 		 stratifier.c stratifier.h connector.c connector.h uthash.h \
 		 utlist.h
-asicseer-pool_LDADD = libckpool.a @JANSSON_LIBS@ @LIBS@
+asicseer_pool_LDADD = libckpool.a @JANSSON_LIBS@ @LIBS@
 
 ckpmsg_SOURCES = ckpmsg.c
 ckpmsg_LDADD = libckpool.a @JANSSON_LIBS@
