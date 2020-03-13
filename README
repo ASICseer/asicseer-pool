@@ -140,7 +140,7 @@ asicseer-db - The pool's database (only if ./configure --with-asicseer-db)
 asicseer-pmsg - An application for passing messages in libasicseerpool format
                 to asicseer-pool/asicseer-db
 notifier - An application designed to be run with bitcoind's -blocknotify to
-	         notify asicseer-pool of block changes.
+           notify asicseer-pool of block changes.
 
 
 Installation is NOT required and asicseer-pool can be run directly from the
