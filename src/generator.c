@@ -1062,7 +1062,7 @@ static void prepare_proxy(proxy_instance_t *proxi);
 /* Creates a duplicate instance or proxi to be used as a subproxy, ignoring
  * fields we don't use in the subproxy. */
 static proxy_instance_t *create_subproxy(pool_t *ckp, gdata_t *gdata, proxy_instance_t *proxi,
-					 const char *url, const char *baseurl)
+                                         const char *url, const char *baseurl)
 {
 	proxy_instance_t *subproxy;
 
