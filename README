@@ -1,7 +1,7 @@
 ASICseer Pool
 
 Ultra low overhead massively scalable multi-process, multi-threaded modular
-bitcoin cash mining pool, proxy, passthrough, library and database interface in
+Bitcoin Cash mining pool, proxy, passthrough, library and database interface in
 C for Linux.  Features SPLNS-style payout scheme.
 
 asicseer-pool is code provided free of charge under the GPLv3 license but its
@@ -11,14 +11,15 @@ Please consider contributing if you are running it on a pool or contributing to 
 authors listed in AUTHORS if you use this code to aid funding further development.
 
 Updated and maintained by Calin Culianu <calin.culianu@gmail.com>
+bitcoincash:qplw0d304x9fshz420lkvys2jxup38m9symky6k028
 
 ===
 
 This software is originally based on the work of Con Kolivas' ckpool
    [ckpool-splns](https://bitbucket.org/ckolivas-splns/ckpool/)
 
-It has been updated and reworked to add a few features and to support
-Bitcoin Cash (rather than Bitcoin).
+It has been updated and reworked to add a features and to support Bitcoin Cash
+(rather than Bitcoin).
 
 * Removed segwit
 * Added larger merkle tree support (for mining 32MB blocks)
@@ -29,7 +30,8 @@ Bitcoin Cash (rather than Bitcoin).
 * Added "mindiff_overrides" which allows a pool to give out larger minimum
   and starting difficulty for stratum clients matching a particular user agent
   string (useful for NiceHash, which requires pools have a high difficulty).
-* Updated asicseer-db sources to actually compile on modern Linux
+* Updated asicseer-db (formerly ckdb) sources to actually compile on modern
+  Linux
 * Fixed bugs
 
 README follows (modified by Calin from the original to reflect added config
@@ -134,7 +136,7 @@ make
 
 Binaries will be built in the src/ subdirectory. Binaries generated will be:
 asicseer-pool - The main pool back end
-asicseer-db - The pool's database
+asicseer-db - The pool's database (only if ./configure --with-asicseer-db)
 asicseer-pmsg - An application for passing messages in libasicseerpool format
                 to asicseer-pool/asicseer-db
 notifier - An application designed to be run with bitcoind's -blocknotify to
