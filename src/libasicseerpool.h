@@ -9,10 +9,13 @@
  * any later version.  See COPYING for more details.
  */
 
-/* This file should contain all exported functions of libckpool */
+/* This file should contain all exported functions of libasicseerpool */
 
-#ifndef LIBCKPOOL_H
-#define LIBCKPOOL_H
+#ifndef LIB_ASICSEER_POOL_H
+#define LIB_ASICSEER_POOL_H
+
+#define PROG_PREFIX "asicseer-"
+#define POOL_PROGNAME PROG_PREFIX"-pool"
 
 #include <errno.h>
 #include <jansson.h>
@@ -608,4 +611,4 @@ void target_from_diff(uchar *target, double diff);
 
 void gen_hash(uchar *data, uchar *hash, int len);
 
-#endif /* LIBCKPOOL_H */
+#endif /* LIB_ASICSEER_POOL_H */

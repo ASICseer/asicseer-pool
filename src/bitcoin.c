@@ -14,7 +14,7 @@
 #include <string.h>
 
 #include "asicseer-pool.h"
-#include "libckpool.h"
+#include "libasicseerpool.h"
 #include "bitcoin.h"
 #include "stratifier.h"
 

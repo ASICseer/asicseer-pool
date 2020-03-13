@@ -1910,8 +1910,8 @@ static bool write_pid(pool_t *ckp, const char *path, pid_t pid)
 		fclose(fp);
 		if (ret == 1 && !(kill(oldpid, 0))) {
 			if (!ckp->killold) {
-				LOGEMERG("Process %s pid %d still exists, start"
-					 " ckpool with -k if you wish to kill it",
+				LOGEMERG("Process %s pid %d still exists, start "
+					 POOL_PROGNAME " with -k if you wish to kill it",
 					 path, oldpid);
 				return false;
 			}
@@ -4480,8 +4480,8 @@ static enum cmd_values breakdown(K_ITEM **ml_item, char *buf, tv_t *now,
 			 *  but socket data must contain SEQALL ...
 			 *  even in manually generated data */
 			if (startup_complete) {
-				LOGEMERG("%s(): *** ckpool needs upgrading? - "
-					 "missing "SEQALL" from '%s' ckpool "
+				LOGEMERG("%s(): *** "POOL_PROGNAME" needs upgrading? - "
+					 "missing "SEQALL" from '%s' "POOL_PROGNAME" "
 					 "data in '%s'",
 					 __func__, cmdptr,
 					 st = safe_text_nonull(buf));
@@ -4789,7 +4789,7 @@ static void *breaker(void *arg)
 			}
 			ck_wunlock(&fpm_lock);
 			if (matched) {
-				LOGERR("%s() reload ckpool queue match at line %"PRIu64,
+				LOGERR("%s() reload "POOL_PROGNAME" queue match at line %"PRIu64,
 					__func__, bq->count);
 			}
 		}
@@ -5349,7 +5349,7 @@ static void make_a_shift_mark()
 		if (!wi_item) {
 			K_RUNLOCK(workinfo_free);
 			LOGWARNING("%s() ckdb workinfo:'%s' marks:'%s' ..."
-				   " start ckpool!", __func__,
+				   " start "POOL_PROGNAME"!", __func__,
 				   "none", m_item ? "expired" : "none");
 			return;
 		}
@@ -5360,7 +5360,7 @@ static void make_a_shift_mark()
 		if (!wi_item) {
 			K_RUNLOCK(workinfo_free);
 			LOGWARNING("%s() ckdb workinfo:'%s' marks:'%s' ..."
-				   " start ckpool!", __func__,
+				   " start "POOL_PROGNAME"!", __func__,
 				   "expired", m_item ? "expired" : "none");
 			return;
 		}
@@ -6893,7 +6893,7 @@ static void *sockrun(void *arg)
 
 	thissock = SOCKNUM(name);
 	if (thissock == MAXSOCK) {
-		quithere(1, "thread started with invalid ckpool_t %p %p",
+		quithere(1, "thread started with invalid pool_t %p %p",
 			 this, name);
 	}
 
@@ -7792,7 +7792,7 @@ static bool reload_from(tv_t *start, const tv_t *finish)
 
 	ck_wlock(&fpm_lock);
 	if (first_pool_message) {
-		LOGEMERG("%s() reload didn't find the first ckpool queue '%.32s...",
+		LOGEMERG("%s() reload didn't find the first "POOL_PROGNAME" queue '%.32s...",
 			 __func__, st = safe_text(first_pool_message));
 		FREENULL(st);
 		FREENULL(first_pool_message);
@@ -9221,7 +9221,7 @@ static struct option long_options[] = {
 	{ "btc-pass",		required_argument,	0,	'P' },
 	{ "reload-queue-limit",	required_argument,	0,	'q' },
 	{ "queue-threads",	required_argument,	0,	'Q' },
-	{ "ckpool-logdir",	required_argument,	0,	'r' },
+	{ "pool-logdir",	required_argument,	0,	'r' },
 	{ "logdir",		required_argument,	0,	'R' },
 	{ "sockdir",		required_argument,	0,	's' },
 	{ "btc-server",		required_argument,	0,	'S' },
@@ -9595,7 +9595,7 @@ int main(int argc, char **argv)
 	if (!db_user)
 		db_user = "postgres";
 	if (!ckp.name)
-		ckp.name = "ckdb";
+		ckp.name = PROG_PREFIX"db";
 	snprintf(buf, 15, "%s%s", ckp.name, dbcode);
 	FIRST_LOCK_INIT(buf);
 	prctl(PR_SET_NAME, buf, 0, 0, 0);

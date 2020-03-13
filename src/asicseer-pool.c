@@ -29,7 +29,7 @@
 
 #include "cashaddr.h"
 #include "asicseer-pool.h"
-#include "libckpool.h"
+#include "libasicseerpool.h"
 #include "generator.h"
 #include "stratifier.h"
 #include "connector.h"
@@ -1641,7 +1641,7 @@ static struct option long_options[] = {
 	{"standalone",	no_argument,		0,	'A'},
 	{"config",	required_argument,	0,	'c'},
 	{"daemonise",	no_argument,		0,	'D'},
-	{"ckdb-name",	required_argument,	0,	'd'},
+	{"db-name",	required_argument,	0,	'd'},
 	{"group",	required_argument,	0,	'g'},
 	{"handover",	no_argument,		0,	'H'},
 	{"help",	no_argument,		0,	'h'},
@@ -1654,7 +1654,7 @@ static struct option long_options[] = {
 	{"proxy",	no_argument,		0,	'p'},
 	{"quiet",	no_argument,		0,	'q'},
 	{"redirector",	no_argument,		0,	'R'},
-	{"ckdb-sockdir",required_argument,	0,	'S'},
+	{"db-sockdir",required_argument,	0,	'S'},
 	{"sockdir",	required_argument,	0,	's'},
 	{"trusted",	no_argument,		0,	't'},
 	{"userproxy",	no_argument,		0,	'u'},
@@ -1820,13 +1820,13 @@ int main(int argc, char **argv)
 
 	if (!ckp.name) {
 		if (ckp.node)
-			ckp.name = "cknode";
+			ckp.name = PROG_PREFIX "node";
 		else if (ckp.redirector)
-			ckp.name = "ckredirector";
+			ckp.name = PROG_PREFIX "redirector";
 		else if (ckp.passthrough)
-			ckp.name = "ckpassthrough";
+			ckp.name = PROG_PREFIX "passthrough";
 		else if (ckp.proxy)
-			ckp.name = "ckproxy";
+			ckp.name = PROG_PREFIX "proxy";
 		else
 			ckp.name = POOL_PROGNAME;
 	}

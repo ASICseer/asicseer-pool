@@ -27,7 +27,7 @@
 #include "cashaddr.h"
 #include "asicseer-pool.h"
 #include "donation.h"
-#include "libckpool.h"
+#include "libasicseerpool.h"
 #include "bitcoin.h"
 #include "sha2.h"
 #include "stratifier.h"

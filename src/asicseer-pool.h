@@ -20,10 +20,8 @@
 #include <inttypes.h>
 
 #include "donation.h"
-#include "libckpool.h"
+#include "libasicseerpool.h"
 #include "uthash.h"
-
-#define POOL_PROGNAME "asicseer-pool"
 
 #define RPC_TIMEOUT 60
 

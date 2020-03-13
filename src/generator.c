@@ -18,7 +18,7 @@
 #include <unistd.h>
 
 #include "asicseer-pool.h"
-#include "libckpool.h"
+#include "libasicseerpool.h"
 #include "generator.h"
 #include "stratifier.h"
 #include "bitcoin.h"

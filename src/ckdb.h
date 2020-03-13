@@ -50,7 +50,7 @@
 #include <gsl/gsl_cdf.h>
 
 #include "asicseer-pool.h"
-#include "libckpool.h"
+#include "libasicseerpool.h"
 
 #include "klist.h"
 #include "ktree.h"

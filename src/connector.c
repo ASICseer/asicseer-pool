@@ -19,7 +19,7 @@
 #include <unistd.h>
 
 #include "asicseer-pool.h"
-#include "libckpool.h"
+#include "libasicseerpool.h"
 #include "uthash.h"
 #include "utlist.h"
 #include "stratifier.h"

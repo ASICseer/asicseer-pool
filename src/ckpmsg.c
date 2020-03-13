@@ -20,7 +20,7 @@
 #include <unistd.h>
 #include <ctype.h>
 
-#include "libckpool.h"
+#include "libasicseerpool.h"
 #include "utlist.h"
 
 struct input_log {
@@ -256,9 +256,9 @@ int main(int argc, char **argv)
 	trail_slash(&socket_dir);
 	if (!name) {
 		if (proxy)
-			name = strdup("ckproxy");
+			name = strdup(PROG_PREFIX"proxy");
 		else
-			name = strdup("ckpool");
+			name = strdup(PROG_PREFIX"pool");
 	}
 	realloc_strcat(&socket_dir, name);
 	dealloc(name);
