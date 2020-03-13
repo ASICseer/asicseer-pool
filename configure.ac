@@ -76,14 +76,14 @@ AC_SUBST(JANSSON_LIBS)
 
 AC_ARG_WITH([asicseer-db],
 	[AC_HELP_STRING([--with-asicseer-db],[Compile asicseer-pool with asicseer-db database support (default disabled)])],
-	[asicseer-db=$withval],[asicseer-db=no]
+	[asicseer_db=$withval],[asicseer_db=no]
 	)
 
 AC_SEARCH_LIBS(clock_nanosleep, rt, , "Error: Required library rt not found." && exit 1)
 AC_SEARCH_LIBS(exp, m, , echo "Error: Required library math not found." && exit 1)
 AC_SEARCH_LIBS(pthread_mutex_trylock, pthread, , "Error: Required library pthreads not found." && exit 1)
 
-if test "x$asicseer-db" != "xno"; then
+if test "x$asicseer_db" != "xno"; then
 	AC_SEARCH_LIBS(PQdb, pq, , echo "Error: Required library pq
 		not found. Install it or disable support by removing --with-asicseer-db" && exit 1)
 	AC_SEARCH_LIBS(HMAC_Init_ex, crypto, , echo "Error: Required library crypto
@@ -96,7 +96,7 @@ if test "x$asicseer-db" != "xno"; then
 		not found. Install them or disable support by removing --with-asicseer-db" && exit 1)
 	AC_DEFINE([USE_ASICSEER_DB], [1], [Defined to 1 if asicseer-db support required])
 fi
-AM_CONDITIONAL([WANT_ASICSEER_DB], [test "x$asicseer-db" != "xno"])
+AM_CONDITIONAL([WANT_ASICSEER_DB], [test "x$asicseer_db" != "xno"])
 AC_SUBST(DB_LIBS)
 
 AC_OUTPUT([Makefile] [src/Makefile])
@@ -110,6 +110,7 @@ echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS"
 echo "  LDFLAGS..............: $LDFLAGS"
 echo "  LDADD................: $LIBS $JANSSON_LIBS"
+echo "  asicseer-db          : $asicseer_db"
 echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"
