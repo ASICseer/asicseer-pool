@@ -404,7 +404,7 @@ retry:
 		/* Any JSON messages received are for the RPC API to handle */
 		api_message(ckp, &buf, &sockd);
 	} else if (cmdmatch(buf, "shutdown")) {
-		LOGWARNING("Listener received shutdown message, terminating ckpool");
+		LOGWARNING("Listener received shutdown message, terminating " POOL_PROGNAME);
 		send_unix_msg(sockd, "exiting");
 		goto out;
 	} else if (cmdmatch(buf, "ping")) {
@@ -694,7 +694,7 @@ out:
 }
 
 /* We used to send messages between each proc_instance via unix sockets when
- * ckpool was a multi-process model but that is no longer required so we can
+ * asicseer-pool was a multi-process model but that is no longer required so we can
  * place the messages directly on the other proc_instance's queue until we
  * deprecate this mechanism. */
 void _queue_proc(proc_instance_t *pi, const char *msg, const char *file, const char *func, const int line)
@@ -948,7 +948,7 @@ void json_rpc_msg(connsock_t *cs, const char *rpc_req)
 static void terminate_oldpid(const pool_t *ckp, proc_instance_t *pi, const pid_t oldpid)
 {
 	if (!ckp->killold) {
-		quit(1, "Process %s pid %d still exists, start ckpool with -H to get a handover or -k if you wish to kill it",
+		quit(1, "Process %s pid %d still exists, start "POOL_PROGNAME" with -H to get a handover or -k if you wish to kill it",
 				pi->processname, oldpid);
 	}
 	LOGNOTICE("Terminating old process %s pid %d", pi->processname, oldpid);
@@ -1828,7 +1828,7 @@ int main(int argc, char **argv)
 		else if (ckp.proxy)
 			ckp.name = "ckproxy";
 		else
-			ckp.name = "ckpool";
+			ckp.name = POOL_PROGNAME;
 	}
 	snprintf(buf, 15, "%s", ckp.name);
 	prctl(PR_SET_NAME, buf, 0, 0, 0);

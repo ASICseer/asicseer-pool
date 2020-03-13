@@ -23,6 +23,8 @@
 #include "libckpool.h"
 #include "uthash.h"
 
+#define POOL_PROGNAME "asicseer-pool"
+
 #define RPC_TIMEOUT 60
 
 struct pool_instance;
