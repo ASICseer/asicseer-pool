@@ -69,7 +69,7 @@
  *  Thus we can queue all messages:
  *	workinfo, shares, shareerror, ageworkinfo, poolstats, userstats
  *	and blocks
- *  with an ok.queued reply to casicseer-pool, to be processed after the reload
+ *  with an ok.queued reply to asicseer-pool, to be processed after the reload
  *  completes and just process authorise messages immediately while the
  *  reload runs
  * However, we start the asicseer-pool message queue after loading
