@@ -1654,7 +1654,7 @@ static struct option long_options[] = {
 	{"proxy",	no_argument,		0,	'p'},
 	{"quiet",	no_argument,		0,	'q'},
 	{"redirector",	no_argument,		0,	'R'},
-	{"db-sockdir",required_argument,	0,	'S'},
+	{"asicseer-db-sockdir", required_argument,	0,	'S'},
 	{"sockdir",	required_argument,	0,	's'},
 	{"trusted",	no_argument,		0,	't'},
 	{"userproxy",	no_argument,		0,	'u'},
