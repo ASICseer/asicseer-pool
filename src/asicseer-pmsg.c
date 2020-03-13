@@ -256,9 +256,9 @@ int main(int argc, char **argv)
 	trail_slash(&socket_dir);
 	if (!name) {
 		if (proxy)
-			name = strdup(PROG_PREFIX"proxy");
+			name = strdup(PROXY_PROGNAME);
 		else
-			name = strdup(PROG_PREFIX"pool");
+			name = strdup(POOL_PROGNAME);
 	}
 	realloc_strcat(&socket_dir, name);
 	dealloc(name);

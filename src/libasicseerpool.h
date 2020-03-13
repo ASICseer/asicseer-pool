@@ -14,9 +14,14 @@
 #ifndef LIB_ASICSEER_POOL_H
 #define LIB_ASICSEER_POOL_H
 
+// The below are used to name processes and for socket names in the sockets dir
 #define PROG_PREFIX "asicseer-"
 #define POOL_PROGNAME PROG_PREFIX"pool"
 #define DB_PROGNAME PROG_PREFIX"db"
+#define PROXY_PROGNAME PROG_PREFIX"proxy"
+#define NODE_PROGNAME PROG_PREFIX"node"
+#define REDIRECTOR_PROGNAME PROG_PREFIX"redirector"
+#define PASSTHROUGH_PROGNAME PROG_PREFIX"passthrough"
 
 #include <errno.h>
 #include <jansson.h>

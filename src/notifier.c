@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 	trail_slash(&socket_dir);
 	if (!name) {
 		if (proxy)
-			name = strdup(PROG_PREFIX"proxy");
+			name = strdup(PROXY_PROGNAME);
 		else
 			name = strdup(POOL_PROGNAME);
 	}

@@ -1820,13 +1820,13 @@ int main(int argc, char **argv)
 
 	if (!ckp.name) {
 		if (ckp.node)
-			ckp.name = PROG_PREFIX "node";
+			ckp.name = NODE_PROGNAME;
 		else if (ckp.redirector)
-			ckp.name = PROG_PREFIX "redirector";
+			ckp.name = REDIRECTOR_PROGNAME;
 		else if (ckp.passthrough)
-			ckp.name = PROG_PREFIX "passthrough";
+			ckp.name = PASSTHROUGH_PROGNAME;
 		else if (ckp.proxy)
-			ckp.name = PROG_PREFIX "proxy";
+			ckp.name = PROXY_PROGNAME;
 		else
 			ckp.name = POOL_PROGNAME;
 	}
