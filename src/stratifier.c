@@ -2304,7 +2304,7 @@ share_diff(char *coinbase, const uchar *enonce1bin, const workbase_t *wb, const 
 }
 
 static void add_remote_blockdata(pool_t *ckp, json_t *val, const int cblen, const char *coinbase,
-				 const uchar *data)
+                                 const uchar *data)
 {
 	char *buf;
 
@@ -2361,9 +2361,9 @@ static void send_nodes_block(sdata_t *sdata, const json_t *block_val, const int6
 
 /* Entered with workbase readcount. */
 static void send_node_block(pool_t *ckp, sdata_t *sdata, const char *enonce1, const char *nonce,
-			    const char *nonce2, const uint32_t ntime32, const uint32_t version_mask,
-			    const int64_t jobid, const double diff, const int64_t client_id,
-			    const char *coinbase, const int cblen, const uchar *data)
+                            const char *nonce2, const uint32_t ntime32, const uint32_t version_mask,
+                            const int64_t jobid, const double diff, const int64_t client_id,
+                            const char *coinbase, const int cblen, const uchar *data)
 {
 	if (sdata->node_instances) {
 		json_t *val = json_object();
