@@ -3725,7 +3725,7 @@ static stratum_instance_t *__recruit_stratum_instance(sdata_t *sdata)
 
 /* Enter with write instance_lock held, drops and grabs it again */
 static stratum_instance_t *__stratum_add_instance(pool_t *ckp, int64_t id, const char *address,
-						  int server)
+                                                  int server)
 {
 	sdata_t *sdata = ckp->sdata;
 	stratum_instance_t *client;
@@ -5765,7 +5765,7 @@ static worker_instance_t *get_worker(sdata_t *sdata, user_instance_t *user, cons
  * user or creates a new one. Needs to be entered with client holding a ref
  * count. */
 static user_instance_t *generate_user(pool_t *ckp, stratum_instance_t *client,
-				      const char *workername)
+                                      const char *workername)
 {
 	char *base_username = strdupa(workername), *username;
 	bool new_user = false, new_worker = false;
@@ -6024,7 +6024,7 @@ static void check_global_user(pool_t *ckp, user_instance_t *user, stratum_instan
 
 /* Manage the response to auth, client must hold ref */
 static void client_auth(pool_t *ckp, stratum_instance_t *client, user_instance_t *user,
-			const bool ret)
+                        const bool ret)
 {
 	if (ret) {
 		client->authorised = ret;
@@ -6194,7 +6194,7 @@ static double time_bias(const double tdiff, const double period)
 
 /* Needs to be entered with client holding a ref count. */
 static void add_submit(pool_t *ckp, stratum_instance_t *client, double sdiff,
-		       const double diff, const bool valid, const bool submit)
+                       const double diff, const bool valid, const bool submit)
 {
 	sdata_t *ckp_sdata = ckp->sdata, *sdata = client->sdata;
 	worker_instance_t *worker = client->worker_instance;
@@ -6340,7 +6340,7 @@ static void add_submit(pool_t *ckp, stratum_instance_t *client, double sdiff,
 
 static void
 downstream_block(pool_t *ckp, sdata_t *sdata, const json_t *val, const int cblen,
-		 const char *coinbase, const uchar *data)
+                 const char *coinbase, const uchar *data)
 {
 	json_t *block_val = json_deep_copy(val);
 
@@ -6356,9 +6356,9 @@ downstream_block(pool_t *ckp, sdata_t *sdata, const json_t *val, const int cblen
  * client holding a ref count. */
 static void
 test_blocksolve(const stratum_instance_t *client, const workbase_t *wb, const uchar *data,
-		const uchar *hash, const double diff, const char *coinbase, int cblen,
-		const char *nonce2, const char *nonce, const uint32_t ntime32, const uint32_t version_mask,
-		const bool stale)
+                const uchar *hash, const double diff, const char *coinbase, int cblen,
+                const char *nonce2, const char *nonce, const uint32_t ntime32, const uint32_t version_mask,
+                const bool stale)
 {
 	char blockhash[68], cdfield[64], *gbt_block;
 	sdata_t *sdata = client->sdata;
@@ -6466,8 +6466,8 @@ test_blocksolve(const stratum_instance_t *client, const workbase_t *wb, const uc
 
 /* Needs to be entered with workbase readcount and client holding a ref count. */
 static double submission_diff(const stratum_instance_t *client, const workbase_t *wb, const char *nonce2,
-			      const uint32_t ntime32, const uint32_t version_mask,
-			      const char *nonce, uchar *hash, const bool stale)
+                              const uint32_t ntime32, const uint32_t version_mask,
+                              const char *nonce, uchar *hash, const bool stale)
 {
 	char *coinbase;
 	uchar swap[80];
@@ -6515,7 +6515,7 @@ static void update_client(const stratum_instance_t *client, const int64_t client
 /* Submit a share in proxy mode to the parent pool. workbase_lock is held.
  * Needs to be entered with client holding a ref count. */
 static void submit_share(stratum_instance_t *client, const int64_t jobid, const char *nonce2,
-			 const char *ntime, const char *nonce)
+                         const char *ntime, const char *nonce)
 {
 	pool_t *ckp = client->ckp;
 	json_t *json_msg;
@@ -6552,7 +6552,7 @@ static void check_best_diff(pool_t *ckp, sdata_t *sdata, user_instance_t *user,
 
 /* Needs to be entered with client holding a ref count. */
 static json_t *parse_submit(stratum_instance_t *client, json_t *json_msg,
-			    const json_t *params_val, json_t **err_val)
+                            const json_t *params_val, json_t **err_val)
 {
 	bool share = false, result = false, invalid = true, submit = false, stale = false;
 	const char *workername, *job_id, *ntime, *nonce, *version_mask;
@@ -6930,7 +6930,7 @@ static void update_client(const stratum_instance_t *client, const int64_t client
 
 static json_params_t
 *create_json_params(const int64_t client_id, const json_t *method, const json_t *params,
-		    const json_t *id_val)
+                    const json_t *id_val)
 {
 	json_params_t *jp = ckalloc(sizeof(json_params_t));
 
@@ -6945,7 +6945,7 @@ static json_params_t
  * documented form of placing diff within the method. Needs to be entered with
  * client holding a ref count. */
 static void suggest_diff(pool_t *ckp, stratum_instance_t *client, const char *method,
-			 const json_t *params_val)
+                         const json_t *params_val)
 {
 	json_t *arr_val = json_array_get(params_val, 0);
 	int64_t sdiff;
@@ -7062,8 +7062,8 @@ static void add_remote_server(sdata_t *sdata, stratum_instance_t *client)
 
 /* Enter with client holding ref count */
 static void parse_method(pool_t *ckp, sdata_t *sdata, stratum_instance_t *client,
-			 const int64_t client_id, json_t *id_val, json_t *method_val,
-			 json_t *params_val)
+                         const int64_t client_id, json_t *id_val, json_t *method_val,
+                         json_t *params_val)
 {
 	const char *method;
 
@@ -7280,7 +7280,7 @@ static void parse_subscribe_result(stratum_instance_t *client, json_t *val)
 }
 
 static void parse_authorise_result(pool_t *ckp, sdata_t *sdata, stratum_instance_t *client,
-				   json_t *val)
+                                   json_t *val)
 {
 	if (!json_is_true(val)) {
 		LOGNOTICE("Client %s was not authorised upstream, dropping", client->identity);
@@ -7356,7 +7356,7 @@ static user_instance_t *generate_remote_user(pool_t *ckp, const char *workername
 }
 
 static void parse_remote_share(pool_t *ckp, sdata_t *sdata, json_t *val, const char *buf,
-			       const int64_t client_id)
+                               const int64_t client_id)
 {
 	json_t *workername_val = json_object_get(val, "workername");
 	double diff, sdiff = 0, network_diff, herp;
@@ -7431,7 +7431,7 @@ static void parse_remote_share(pool_t *ckp, sdata_t *sdata, json_t *val, const c
 }
 
 static void parse_remote_shareerr(pool_t *ckp, sdata_t *sdata, json_t *val, const char *buf,
-				  const int64_t client_id)
+                                  const int64_t client_id)
 {
 	user_instance_t *user = NULL;
 	const char *workername;
@@ -7455,7 +7455,7 @@ static void parse_remote_shareerr(pool_t *ckp, sdata_t *sdata, json_t *val, cons
 }
 
 static void send_auth_response(sdata_t *sdata, const int64_t client_id, const bool ret,
-			       json_t *id_val, json_t *err_val)
+                               json_t *id_val, json_t *err_val)
 {
 	json_t *json_msg = json_object();
 
@@ -7570,7 +7570,7 @@ static void parse_remote_workerstats(pool_t *ckp, const json_t *val, const int64
 #define parse_remote_workinfo(ckp, val, client_id) add_node_base(ckp, val, true, client_id)
 
 static void parse_remote_auth(pool_t *ckp, sdata_t *sdata, json_t *val, stratum_instance_t *remote,
-			      const int64_t remote_id)
+                              const int64_t remote_id)
 {
 	json_t *params, *method, *id_val;
 	stratum_instance_t *client;
@@ -7626,7 +7626,7 @@ static void parse_remote_workers(sdata_t *sdata, const json_t *val, const char *
 /* Attempt to submit a remote block locally by recreating it from its workinfo
  * in addition to sending it to asicseer-db */
 static void parse_remote_block(pool_t *ckp, sdata_t *sdata, json_t *val, const char *buf,
-			       const int64_t client_id)
+                               const int64_t client_id)
 {
 	json_t *workername_val = json_object_get(val, "workername"),
 		*name_val = json_object_get(val, "name"), *res;
@@ -8593,7 +8593,7 @@ static void add_log_entry(log_entry_t **entries, char **fname, char **buf)
 
 /* No filename associated with each entry in this variant */
 static void add_onelog_entry_descending(log_entry_t **entries, char **buf,
-				     double comparator)
+                                        double comparator)
 {
 	log_entry_t *entry = ckzalloc(sizeof(log_entry_t));
 
