@@ -6529,7 +6529,7 @@ static void submit_share(stratum_instance_t *client, const int64_t jobid, const 
 }
 
 static void check_best_diff(pool_t *ckp, sdata_t *sdata, user_instance_t *user,
-			    worker_instance_t *worker, const double sdiff, stratum_instance_t *client)
+                            worker_instance_t *worker, const double sdiff, stratum_instance_t *client)
 {
 	char buf[512];
 	bool best_worker = false, best_user = false;
