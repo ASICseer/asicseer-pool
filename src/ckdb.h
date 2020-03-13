@@ -49,7 +49,7 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_cdf.h>
 
-#include "ckpool.h"
+#include "asicseer-pool.h"
 #include "libckpool.h"
 
 #include "klist.h"

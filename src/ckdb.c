@@ -152,7 +152,7 @@
  */
 
 // sockets
-static ckpool_t ckp, ckpweb, ckpcmd;
+static pool_t ckp, ckpweb, ckpcmd;
 static int accesspool, accessweb, accesscmd;
 static const char *ispool = "pool";
 static const char *isweb = "web";
@@ -1891,7 +1891,7 @@ static bool reload()
 
 /* Open the file in path, check if there is a pid in there that still exists
  * and if not, write the pid into that file. */
-static bool write_pid(ckpool_t *ckp, const char *path, pid_t pid)
+static bool write_pid(pool_t *ckp, const char *path, pid_t pid)
 {
 	struct stat statbuf;
 	FILE *fp;
@@ -1966,7 +1966,7 @@ static void rm_namepid(proc_instance_t *pi)
 
 }
 
-static void clean_up(ckpool_t *ckp)
+static void clean_up(pool_t *ckp)
 {
 	rm_namepid(&ckp->main);
 	dealloc(ckp->socket_dir);
@@ -6880,7 +6880,7 @@ skippy:
 
 static void *sockrun(void *arg)
 {
-	ckpool_t *this = (ckpool_t *)arg;
+	pool_t *this = (pool_t *)arg;
 	unixsock_t *us = &(this->main.us);
 	char *end, *buf = NULL;
 	K_ITEM *bq_item = NULL;

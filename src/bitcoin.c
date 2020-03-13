@@ -13,7 +13,7 @@
 
 #include <string.h>
 
-#include "ckpool.h"
+#include "asicseer-pool.h"
 #include "libckpool.h"
 #include "bitcoin.h"
 #include "stratifier.h"
