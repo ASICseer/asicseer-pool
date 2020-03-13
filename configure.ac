@@ -75,7 +75,7 @@ JANSSON_LIBS="jansson-2.10/src/.libs/libjansson.a"
 AC_SUBST(JANSSON_LIBS)
 
 AC_ARG_WITH([asicseer-db],
-	[AC_HELP_STRING([--with-asicseer-db],[Compile ASICseer-pool with asicseer-db database support (default disabled)])],
+	[AC_HELP_STRING([--with-asicseer-db],[Compile asicseer-pool with asicseer-db database support (default disabled)])],
 	[asicseer-db=$withval],[asicseer-db=no]
 	)
 
