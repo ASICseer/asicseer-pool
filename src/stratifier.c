@@ -526,7 +526,7 @@ struct stratifier_data {
 	ckmsgq_t *updateq;	// Generator base work updates
 	ckmsgq_t *ssends;	// Stratum sends
 	ckmsgq_t *srecvs;	// Stratum receives
-	ckmsgq_t *ckdbq;	// ckdb
+	ckmsgq_t *ckdbq;	// ckdb (asicseer-db)
 	ckmsgq_t *sshareq;	// Stratum share sends
 	ckmsgq_t *sauthq;	// Stratum authorisations
 	ckmsgq_t *stxnq;	// Transaction requests
@@ -902,7 +902,7 @@ static void generate_coinbase(const pool_t *ckp, workbase_t *wb)
 			json_set_double(wb->payout, "dev_donation", df64 / (double)SATOSHIS);
 		}
 	} else {
-		// payout directly to pool in this mode (ckdb mode)
+		// payout directly to pool in this mode (asicseer-db mode)
 		p64 = _add_txnbin(wb, gentxns, g64, sdata->txnbin, sdata->txnlen);
 	}
 	wb->coinb2len += 4; // Blank lock
@@ -983,7 +983,7 @@ static void age_share_hashtable(sdata_t *sdata, const int64_t wb_id)
 
 static char *status_chars = "|/-\\";
 
-/* Absorbs the json and generates a ckdb json message, logs it to the ckdb
+/* Absorbs the json and generates a asicseer-db json message, logs it to the asicseer-db
  * log and returns the malloced message. */
 static char *ckdb_msg(pool_t *ckp, sdata_t *sdata, json_t *val, const int idtype)
 {
@@ -2105,7 +2105,7 @@ static void add_remote_base(pool_t *ckp, sdata_t *sdata, workbase_t *wb)
 	/* Set jobid with mapped id for other nodes and remotes */
 	json_set_int64(wb_val, "jobid", wb->mapped_id);
 
-	/* Replace workinfoid to mapped id for ckdb */
+	/* Replace workinfoid to mapped id for asicseer-db */
 	json_set_int64(val, "workinfoid", wb->mapped_id);
 
 	/* Strip unnecessary fields and add extra fields needed */
@@ -3507,7 +3507,7 @@ static void update_diff(pool_t *ckp, const char *cmd)
 }
 
 #if 0
-static void generator_drop_proxy(ckpool_t *ckp, const int64_t id, const int subid)
+static void generator_drop_proxy(pool_t *ckp, const int64_t id, const int subid)
 {
 	char msg[256];
 
@@ -3745,7 +3745,7 @@ static stratum_instance_t *__stratum_add_instance(pool_t *ckp, int64_t id, const
 	client->diff = client->old_diff = ckp->startdiff;
 	client->ckp = ckp;
 	tv_time(&client->ldc);
-	/* Points to ckp sdata in ckpool mode, but is changed later in proxy
+	/* Points to ckp sdata in asicseer-pool mode, but is changed later in proxy
 	 * mode . */
 	client->sdata = sdata;
 	if ((pass_id = subclient(id))) {
@@ -3823,7 +3823,7 @@ static void connector_test_client(pool_t *ckp, const int64_t id)
 
 /* For creating a list of sends without locking that can then be concatenated
  * to the stratum_sends list. Minimises locking and avoids taking recursive
- * locks. Sends only to sdata bound clients (everyone in ckpool) */
+ * locks. Sends only to sdata bound clients (everyone in asicseer-pool) */
 static void stratum_broadcast(sdata_t *sdata, json_t *val, const int msg_type)
 {
 	pool_t *ckp = sdata->ckp;
@@ -4858,7 +4858,7 @@ static void ckdbq_flush(sdata_t *sdata)
 	}
 	mutex_unlock(ckdbq->lock);
 
-	LOGWARNING("Flushed %d messages from ckdb queue", flushed);
+	LOGWARNING("Flushed %d messages from asicseer-db queue", flushed);
 }
 
 static void stratum_loop(pool_t *ckp, proc_instance_t *pi)
@@ -5906,8 +5906,8 @@ static int send_recv_auth(stratum_instance_t *client)
 		goto out;
 	}
 
-	/* We want responses from ckdb serialised and not interleaved with
-	 * other requests. Wait up to 3 seconds for exclusive access to ckdb
+	/* We want responses from asicseer-db serialised and not interleaved with
+	 * other requests. Wait up to 3 seconds for exclusive access to asicseer-db
 	 * and if we don't receive it treat it as a delayed auth if possible */
 	if (likely(!mutex_timedlock(&sdata->ckdb_lock, 3))) {
 		buf = ckdb_msg_call(ckp, json_msg);
@@ -5925,18 +5925,18 @@ static int send_recv_auth(stratum_instance_t *client)
 		json_t *val = NULL;
 		int offset = 0;
 
-		LOGINFO("Got ckdb response: %s", buf);
+		LOGINFO("Got asicseer-db response: %s", buf);
 		response = alloca(responselen);
 		memset(response, 0, responselen);
 		if (unlikely(sscanf(buf, "%*d.%*d.%c%n", response, &offset) < 1)) {
-			LOGWARNING("Got1 unparseable ckdb auth response: %s", buf);
+			LOGWARNING("Got1 unparseable asicseer-db auth response: %s", buf);
 			goto out_fail;
 		}
 		strcpy(response+1, buf+offset);
 		if (!strchr(response, '=')) {
 			if (cmdmatch(response, "failed"))
 				goto out;
-			LOGWARNING("Got2 unparseable ckdb auth response: %s", buf);
+			LOGWARNING("Got2 unparseable asicseer-db auth response: %s", buf);
 			goto out_fail;
 		}
 		cmd = response;
@@ -5967,12 +5967,12 @@ static int send_recv_auth(stratum_instance_t *client)
 		goto out;
 	}
 	if (contended)
-		LOGWARNING("Prolonged lock contention for ckdb while trying to authorise");
+		LOGWARNING("Prolonged lock contention for asicseer-db while trying to authorise");
 	else {
 		if (!sdata->ckdb_offline)
-			LOGWARNING("Got no auth response from ckdb :(");
+			LOGWARNING("Got no auth response from asicseer-db :(");
 		else
-			LOGNOTICE("No auth response for %s from offline ckdb", user->username);
+			LOGNOTICE("No auth response for %s from offline asicseer-db", user->username);
 	}
 out_fail:
 	ret = -1;
@@ -5981,8 +5981,8 @@ out:
 	return ret;
 }
 
-/* For sending auths to ckdb after we've already decided we can authorise
- * these clients while ckdb is offline, based on an existing client of the
+/* For sending auths to asicseer-db after we've already decided we can authorise
+ * these clients while asicseer-db is offline, based on an existing client of the
  * same username already having been authorised. Needs to be entered with
  * client holding a ref count. */
 static void queue_delayed_auth(stratum_instance_t *client)
@@ -6136,14 +6136,14 @@ static json_t *parse_authorise(stratum_instance_t *client, const json_t *params_
 		ret = user->bchaddress;
 	else {
 		/* Preauth workers for the first 10 minutes after the user is
-		 * first authorised by ckdb to avoid floods of worker auths.
+		 * first authorised by asicseer-db to avoid floods of worker auths.
 		 * *errnum is implied zero already so ret will be set true */
 		if (!user->auth_time || time(NULL) - user->auth_time > 600)
 			*errnum = send_recv_auth(client);
 		if (!*errnum)
 			ret = true;
 		else if (*errnum < 0 && user->secondaryuserid) {
-			/* This user has already been authorised but ckdb is
+			/* This user has already been authorised but asicseer-db is
 			 * offline so we assume they already exist but add the
 			 * auth request to the queued messages. */
 			queue_delayed_auth(client);
@@ -7419,7 +7419,7 @@ static void parse_remote_share(pool_t *ckp, sdata_t *sdata, json_t *val, const c
 
 	LOGINFO("Added %.0lf remote shares to worker %s", diff, workername);
 
-	/* Remove unwanted entry, add extra info and submit it to ckdb */
+	/* Remove unwanted entry, add extra info and submit it to asicseer-db */
 	json_object_del(val, "method");
 	/* Create a new copy for use by ckdbq_add */
 	val = json_deep_copy(val);
@@ -7443,7 +7443,7 @@ static void parse_remote_shareerr(pool_t *ckp, sdata_t *sdata, json_t *val, cons
 	}
 	user = generate_remote_user(ckp, workername);
 
-	/* Remove unwanted entry, add extra info and submit it to ckdb */
+	/* Remove unwanted entry, add extra info and submit it to asicseer-db */
 	json_object_del(val, "method");
 	/* Create a new copy for use by ckdbq_add */
 	val = json_deep_copy(val);
@@ -7551,13 +7551,13 @@ void parse_upstream_workinfo(pool_t *ckp, json_t *val)
 	add_node_base(ckp, val, true, 0);
 }
 
-/* Remap the remote client id to the local one and submit to ckdb */
+/* Remap the remote client id to the local one and submit to asicseer-db */
 static void parse_remote_workerstats(pool_t *ckp, const json_t *val, const int64_t remote_id)
 {
 	int64_t client_id;
 	json_t *res;
 
-	/* Create copy for ckdb to absorb */
+	/* Create copy for asicseer-db to absorb */
 	res = json_deep_copy(val);
 	json_get_int64(&client_id, res, "clientid");
 	/* Encode remote server client_id into remote client's id */
@@ -7624,7 +7624,7 @@ static void parse_remote_workers(sdata_t *sdata, const json_t *val, const char *
 }
 
 /* Attempt to submit a remote block locally by recreating it from its workinfo
- * in addition to sending it to ckdb */
+ * in addition to sending it to asicseer-db */
 static void parse_remote_block(pool_t *ckp, sdata_t *sdata, json_t *val, const char *buf,
 			       const int64_t client_id)
 {
@@ -8283,7 +8283,7 @@ static void parse_ckdb_cmd(pool_t *ckp, const char *cmd)
 
 	val = json_loads(cmd, 0, &err_val);
 	if (unlikely(!val)) {
-		LOGWARNING("CKDB MSG %s JSON decode failed(%d): %s", cmd, err_val.line, err_val.text);
+		LOGWARNING("ASICSEER-DB MSG %s JSON decode failed(%d): %s", cmd, err_val.line, err_val.text);
 		return;
 	}
 	res_val = json_object_get(val, "diffchange");
@@ -8339,15 +8339,15 @@ static void ckdbq_process(pool_t *ckp, char *msg)
 
 		if (unlikely(!buf)) {
 			if (!test_and_set(&sdata->ckdb_offline, &sdata->ckdb_lock))
-				LOGWARNING("Failed to talk to ckdb, queueing messages");
+				LOGWARNING("Failed to talk to asicseer-db, queueing messages");
 			sleep(5);
 		}
 	}
 	free(msg);
 	if (test_and_clear(&sdata->ckdb_offline, &sdata->ckdb_lock))
-		LOGWARNING("Successfully resumed talking to ckdb");
+		LOGWARNING("Successfully resumed talking to asicseer-db");
 
-	/* Process any requests from ckdb that are heartbeat responses with
+	/* Process any requests from asicseer-db that are heartbeat responses with
 	 * specific requests. */
 	responselen = strlen(buf);
 	if (likely(responselen > 1)) {
@@ -8362,15 +8362,15 @@ static void ckdbq_process(pool_t *ckp, char *msg)
 
 				cmd = response;
 				strsep(&cmd, ".");
-				LOGDEBUG("Got ckdb response: %s cmd %s", response, cmd);
+				LOGDEBUG("Got asicseer-db response: %s cmd %s", response, cmd);
 				if (cmdmatch(cmd, "heartbeat=")) {
 					strsep(&cmd, "=");
 					parse_ckdb_cmd(ckp, cmd);
 				}
 			} else
-				LOGWARNING("Got ckdb failure response: %s", buf);
+				LOGWARNING("Got asicseer-db failure response: %s", buf);
 		} else
-			LOGWARNING("Got bad ckdb response: %s", buf);
+			LOGWARNING("Got bad asicseer-db response: %s", buf);
 	}
 	free(buf);
 }
@@ -8477,7 +8477,7 @@ out:
 	discard_json_params(jp);
 }
 
-/* Called 32 times per min, we send the updated stats to ckdb of those users
+/* Called 32 times per min, we send the updated stats to asicseer-db of those users
  * who have gone 1 minute between updates. This ends up staggering stats to
  * avoid floods of stat data coming at once. */
 static void update_workerstats(pool_t *ckp, sdata_t *sdata)
@@ -8489,7 +8489,7 @@ static void update_workerstats(pool_t *ckp, sdata_t *sdata)
 	ts_t ts_now;
 
 	if (sdata->ckdb_offline) {
-		LOGDEBUG("Not queueing workerstats due to ckdb offline");
+		LOGDEBUG("Not queueing workerstats due to asicseer-db offline");
 		return;
 	}
 
@@ -9317,9 +9317,9 @@ static void *statsupdate(void *arg)
 	return NULL;
 }
 
-/* Sends a heartbeat to ckdb every second to maintain the relationship of
- * ckpool always initiating a request -> getting a ckdb response, but allows
- * ckdb to provide specific commands to ckpool. */
+/* Sends a heartbeat to asicseer-db every second to maintain the relationship of
+ * asicseer-pool always initiating a request -> getting a asicseer-db response, but allows
+ * asicseer-db to provide specific commands to asicseer-pool. */
 static void *ckdb_heartbeat(void *arg)
 {
 	pool_t *ckp = (pool_t *)arg;
@@ -9335,7 +9335,7 @@ static void *ckdb_heartbeat(void *arg)
 
 		cksleep_ms(1000);
 		if (unlikely(!ckmsgq_empty(sdata->ckdbq))) {
-			LOGDEBUG("Witholding heartbeat due to ckdb messages being queued");
+			LOGDEBUG("Witholding heartbeat due to asicseer-db messages being queued");
 			continue;
 		}
 		ts_realtime(&ts_now);

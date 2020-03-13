@@ -229,7 +229,7 @@ struct pool_instance {
 	/* Are we running in userproxy mode */
 	bool userproxy;
 
-	/* Should we daemonise the ckpool process */
+	/* Should we daemonise the asicseer-pool process */
 	bool daemon;
 
 	/* Should we disable the throbber */
@@ -418,7 +418,7 @@ struct apimsg {
 	int sockd;
 };
 
-static inline void ckpool_api(pool_t __maybe_unused *ckp, apimsg_t __maybe_unused *apimsg) {};
+static inline void asicseer_pool_api(pool_t __maybe_unused *ckp, apimsg_t __maybe_unused *apimsg) {};
 static inline json_t *json_encode_errormsg(json_error_t __maybe_unused *err_val) { return NULL; };
 static inline json_t *json_errormsg(const char __maybe_unused *fmt, ...) { return NULL; };
 static inline void send_api_response(json_t __maybe_unused *val, const int __maybe_unused sockd) {};
@@ -430,4 +430,4 @@ static inline int64_t subclient(const int64_t client_id)
 	return (client_id >> 32);
 }
 
-#endif /* CKPOOL_H */
+#endif /* ASICSEER_POOL_H */

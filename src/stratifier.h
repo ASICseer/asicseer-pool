@@ -15,8 +15,8 @@
 /* Max depth of the merkle tree. Increase this if blocks ever have more than 4 billion tx's. */
 #define GENWORK_MAX_MERKLE_DEPTH 32
 
-/* This used to be "ckpool" in the original. This is the hard-coded prefix
-   for the coinbase tx. Coinbase message ends up being "/PREFIX $bchsig SUFFIX/" */
+/* This is the hard-coded prefix for the coinbase tx.
+   Coinbase message ends up being "/PREFIX $bchsig SUFFIX/" */
 #define HARDCODED_COINBASE_PREFIX_STR "pool.ASICseer.com"
 #define HARDCODED_COINBASE_SUFFIX_STR "BCHN"
 #define MAX_USER_COINBASE_LEN 16 /* The max length of user bchsig portion */

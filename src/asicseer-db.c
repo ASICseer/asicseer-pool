@@ -51,7 +51,7 @@
  *	listener_all() for cmd '_c00listen' and btc '_b00listen'
  *		each of which manage their thead counts
  *	process_socket() '_procsock'
- *	sockrun() for ckpool '_psockrun' web '_wsockrun' and cmd '_csockrun'
+ *	sockrun() for asicseer-pool '_psockrun' web '_wsockrun' and cmd '_csockrun'
  *
  * reload() starts:
  *	process_reload() '_p00rload'
@@ -61,22 +61,22 @@
 /* Startup
  * -------
  * During startup we load the DB and track where it is up to with
- *  dbstatus, we then reload "ckpool's ckdb logfiles" (CCLs) based
+ *  dbstatus, we then reload "asicseer-pool's asicseer-db logfiles" (CCLs) based
  *  on dbstatus
- * Once the DB is loaded, we can immediately start receiving ckpool
- *  messages since ckpool already has logged all messages to the CLLs
- *  and ckpool only verifies authorise responses
+ * Once the DB is loaded, we can immediately start receiving asicseer-pool
+ *  messages since asicseer-pool already has logged all messages to the CLLs
+ *  and asicseer-pool only verifies authorise responses
  *  Thus we can queue all messages:
  *	workinfo, shares, shareerror, ageworkinfo, poolstats, userstats
  *	and blocks
- *  with an ok.queued reply to ckpool, to be processed after the reload
+ *  with an ok.queued reply to casicseer-pool, to be processed after the reload
  *  completes and just process authorise messages immediately while the
  *  reload runs
- * However, we start the ckpool message queue after loading
+ * However, we start the asicseer-pool message queue after loading
  *  the optioncontrol, idcontrol, users, workers and useratts DB tables,
  *  before loading the much larger DB tables, so that ckdb is effectively
  *  ready for messages almost immediately
- * The first ckpool message allows us to know where ckpool is up to
+ * The first asicseer-pool message allows us to know where asicseer-pool is up to
  *  in the CCLs - see reload_from() for how this is handled
  * The users table, required for the authorise messages, is always updated
  *  in the disk DB immediately
@@ -84,7 +84,7 @@
 
 /* Reload data needed
  * ------------------
- * After the DB load completes, load "ckpool's ckdb logfile" (CCL), and
+ * After the DB load completes, load "asicseer-pool's asicseer-db logfile" (CCL), and
  * all later CCLs, that contains the oldest date of all of the following:
  *  RAM shares: oldest DB sharesummary firstshare where complete='n'
  *	All shares before this have been summarised to the DB with
@@ -127,10 +127,10 @@
  *
  * The code deals with the issue of 'now' when reloading by:
  *  createdate is considered 'now' for all data during a reload and is
- *  a mandatory field always checked for in ckpool data
+ *  a mandatory field always checked for in asicseer-pool data
  * Implementing this is simple by assuming 'now' is always createdate
  *  i.e. during reload but also during normal running to avoid timing
- *  issues with ckpool data
+ *  issues with asicseer-pool data
  * Other data supplies the current time to the functions that require
  *  'now' since that data is not part of a reload
  *
@@ -357,7 +357,7 @@ static double ccl_unordered_most;
 int64_t confirm_first_workinfoid;
 int64_t confirm_last_workinfoid;
 /* Stop the reload 11min after the 'last' workinfoid+1 appears
- * ckpool uses 10min - but add 1min to be sure */
+ * asicseer-pool uses 10min - but add 1min to be sure */
 #define WORKINFO_AGE 660
 
 static tv_t reload_timestamp;
@@ -411,7 +411,7 @@ static bool ioqueue_flush = false;
 static int reload_access = ACCESS_POOL;
 
 /* These are included in cmd_homepage
- *  to help identify when ckpool locks up (or dies) */
+ *  to help identify when asicseer-pool locks up (or dies) */
 tv_t last_heartbeat;
 tv_t last_workinfo;
 tv_t last_share;
@@ -845,7 +845,7 @@ EVENT_LIMITS e_limits[] = {
  { EVENTID_BTCUSED,	"BTCUSED",	true,	60,	1,	2*60,	2,	60,	1,	2*60,	2,	24*60*60 },
  // It's only possible to create an account once, so user_lo/hi can never trigger
  { EVENTID_AUTOACC,	"AUTOACC",	true,	60,	1,	2*60,	2,	60,	1,	2*60,	2,	24*60*60 },
- // Invalid user on auth, CKPool will throttle these
+ // Invalid user on auth, asicseer-pool will throttle these
  { EVENTID_INVAUTH,	"INVAUTH",	true,	60,	1,	2*60,	2,	60,	1,	2*60,	2,	24*60*60 },
  // Invalid user on chkpass
  { EVENTID_INVUSER,	"INVUSER",	true,	60,	1,	2*60,	2,	60,	1,	2*60,	2,	24*60*60 },
@@ -2532,7 +2532,7 @@ static void esm_report()
  *  seqset twice if a new seqset arrives between the unlock/lock for writing
  *  the console message - since a new seqset would shuffle the sets down and
  *  if the list was full, move the last one back to the top of the setset_store
- *  list, but this would normally only be when ckpool restarts and also wont
+ *  list, but this would normally only be when asicseer-pool restarts and also wont
  *  cause a problem since only the last set can be moved and the code checks
  *  if it is the end and also duplicates the set before releasing the lock */
 void sequence_report(bool lock)
@@ -3424,7 +3424,7 @@ static bool update_seq(enum seq_num seq, uint64_t n_seqcmd,
 	 *  of order, each new set is added depending upon the value of seqstt
 	 *  so the current pool is first, to minimise searching seqset_store
 	 * The order of the rest isn't as important
-	 * N.B. a new set is only created once per ckpool start */
+	 * N.B. a new set is only created once per asicseer-pool start */
 	if (firstseq) {
 		k_add_head(seqset_store, seqset_item);
 		set = 0;
@@ -7631,8 +7631,8 @@ static bool reload_from(tv_t *start, const tv_t *finish)
 		setnow(&file_begin);
 
 		/* Don't abort when matched since breakdown() will remove
-		 *  the matching message sequence numbers queued from ckpool
-		 * Also since ckpool messages are not in order, we could be
+		 *  the matching message sequence numbers queued from asicseer-pool
+		 * Also since asicseer-pool messages are not in order, we could be
 		 *  aborting early and not get the few slightly later out of
 		 *  order messages in the log file */
 		while (!everyone_die &&
@@ -7732,10 +7732,10 @@ static bool reload_from(tv_t *start, const tv_t *finish)
 			while (42) {
 				reload_timestamp.tv_sec += ROLL_S;
 				/* WARNING: if the system clock is wrong, any CCLs
-				 * missing or not created due to a ckpool outage of
+				 * missing or not created due to a asicseer-pool outage of
 				 * an hour or more can stop the reload early and
 				 * cause DB problems! Though, the clock being wrong
-				 * can screw up ckpool and ckdb anyway ... */
+				 * can screw up asicseer-pool and ckdb anyway ... */
 				if (!tv_newer(&reload_timestamp, &now)) {
 					finished = true;
 					break;
@@ -9202,7 +9202,7 @@ static struct option long_options[] = {
 	{ "help",		no_argument,		0,	'h' },
 	{ "pool-instance",	required_argument,	0,	'i' },
 	// only use 'I' for reloading lots of known valid data via asicseer-db,
-	// DON'T use when connected to ckpool
+	// DON'T use when connected to asicseer-pool
 	{ "ignore-seq",		required_argument,	0,	'I' },
 	{ "killold",		no_argument,		0,	'k' },
 	// Generate old keysummary records
@@ -9640,7 +9640,7 @@ int main(int argc, char **argv)
 		quit(1, "Failed to open log file %s", buf);
 	ckp.logfd = fileno(ckp.logfp);
 
-	// -db is ckpool messages
+	// -db is asicseer-pool messages
 	snprintf(logname_db, sizeof(logname_db), "%s%s-db%s-",
 				ckp.logdir, ckp.name, dbcode);
 	// -io is everything else
