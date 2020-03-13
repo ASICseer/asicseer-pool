@@ -15,7 +15,7 @@
 #define LIB_ASICSEER_POOL_H
 
 #define PROG_PREFIX "asicseer-"
-#define POOL_PROGNAME PROG_PREFIX"-pool"
+#define POOL_PROGNAME PROG_PREFIX"pool"
 
 #include <errno.h>
 #include <jansson.h>
