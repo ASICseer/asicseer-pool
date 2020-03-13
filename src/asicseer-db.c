@@ -5348,7 +5348,7 @@ static void make_a_shift_mark()
 		DATA_WORKINFO_NULL(workinfo, wi_item);
 		if (!wi_item) {
 			K_RUNLOCK(workinfo_free);
-			LOGWARNING("%s() "PROG_PREFIX"db workinfo:'%s' marks:'%s' ..."
+			LOGWARNING("%s() "DB_PROGNAME" workinfo:'%s' marks:'%s' ..."
 				   " start "POOL_PROGNAME"!", __func__,
 				   "none", m_item ? "expired" : "none");
 			return;
@@ -5359,7 +5359,7 @@ static void make_a_shift_mark()
 		}
 		if (!wi_item) {
 			K_RUNLOCK(workinfo_free);
-			LOGWARNING("%s() "PROG_PREFIX"db workinfo:'%s' marks:'%s' ..."
+			LOGWARNING("%s() "DB_PROGNAME" workinfo:'%s' marks:'%s' ..."
 				   " start "POOL_PROGNAME"!", __func__,
 				   "expired", m_item ? "expired" : "none");
 			return;
@@ -6017,7 +6017,7 @@ static void *replier(void *arg)
 				cksleep_ms(1000);
 			else {
 				// Abort on 10 consecutive fails or 100 total
-				quithere(1, "%c aborting "PROG_PREFIX"db: epoll_wait "
+				quithere(1, "%c aborting "DB_PROGNAME": epoll_wait "
 					 "(%d/%d) failed (%d:%s)",
 					 typ, fails, fails_tot,
 					 e, strerror(e));
@@ -6531,7 +6531,7 @@ static void *process_socket(__maybe_unused void *arg)
 			case CMD_TERMINATE:
 				LOGWARNING("Listener received"
 					   " terminate message,"
-					   " terminating "PROG_PREFIX"db");
+					   " terminating "DB_PROGNAME);
 				snprintf(reply, sizeof(reply),
 					 "%s.%ld.ok.exiting",
 					 msgline->id,
@@ -8198,7 +8198,7 @@ static void *listener(__maybe_unused void *arg)
 			   ooo_status(ooo_buf, sizeof(ooo_buf)));
 		sequence_report(true);
 
-		LOGWARNING("%s(): "PROG_PREFIX"db ready, pool queue %d (%d/%d/%d/%d/%d)",
+		LOGWARNING("%s(): "DB_PROGNAME" ready, pool queue %d (%d/%d/%d/%d/%d)",
 			   __func__, bq+bqp+bqd+wq0count+wqcount,
 			   bq, bqp, bqd, wq0count, wqcount);
 
@@ -9285,7 +9285,7 @@ int main(int argc, char **argv)
 			case 'a':
 				len = strlen(optarg);
 				if (len > MAX_ALERT_CMD)
-					quit(1, PROG_PREFIX"db_alert_cmd (%d) too large,"
+					quit(1, "db_alert_cmd (%d) too large,"
 						" limit %d",
 						(int)len, MAX_ALERT_CMD);
 				ckdb_alert_cmd = strdup(optarg);
@@ -9595,7 +9595,7 @@ int main(int argc, char **argv)
 	if (!db_user)
 		db_user = "postgres";
 	if (!ckp.name)
-		ckp.name = PROG_PREFIX"db";
+		ckp.name = DB_PROGNAME;
 	snprintf(buf, 15, "%s%s", ckp.name, dbcode);
 	FIRST_LOCK_INIT(buf);
 	prctl(PR_SET_NAME, buf, 0, 0, 0);
