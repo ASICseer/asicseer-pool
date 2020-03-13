@@ -50,53 +50,53 @@ DESIGN:
 
 Architecture:
 - Low level hand coded architecture relying on minimal outside libraries beyond
-basic glibc functions for maximum flexibility and minimal overhead that can be
-built and deployed on any Linux installation.
+  basic glibc functions for maximum flexibility and minimal overhead that can be
+  built and deployed on any Linux installation.
 - Multiprocess+multithreaded design to scale to massive deployments and
-capitalise on modern multicore/multithread CPU designs.
+  capitalise on modern multicore/multithread CPU designs.
 - Minimal memory overhead.
 - Utilises ultra reliable unix sockets for communication with dependent
-processes.
+  processes.
 - Modular code design to streamline further development.
-- Standalone library code that can be utilised independently of ckpool.
+- Standalone library code that can be utilised independently of asicseer-pool.
 - Same code can be deployed in many different modes designed to talk to each
-other on the same machine, local lan or remote internet locations.
+  other on the same machine, local lan or remote internet locations.
 
 Modes of deployment:
 - Comprehensive pooled mining solution with a postgresql database interface.
 - Passthrough node(s) that combine connections to a single socket which can
-be used to scale to millions of clients and allow the main pool to be isolated
-from direct communication with clients.
+  be used to scale to millions of clients and allow the main pool to be isolated
+  from direct communication with clients.
 - Proxy nodes with a database that act as a single client to the upstream pool
-while storing full client data of their own.
+  while storing full client data of their own.
 - Simple proxy without the limitations of hashrate inherent in other proxy
-solutions when talking to ckpool.
+  solutions when talking to asicseer-pool.
 - Simple pool without a database.
 - Library for use by other software.
 
 Features:
 - Bitcoind communication to unmodified bitcoind with multiple failover to local
-or remote locations.
+  or remote locations.
 - Local pool instance worker limited only by operating system resources and
-can be made virtually limitless through use of multiple downstream passthrough
-nodes.
+  can be made virtually limitless through use of multiple downstream
+  passthrough nodes.
 - Proxy and passthrough modes can set up multiple failover upstream pools.
 - Optional share logging.
 - Virtually seamless restarts for upgrades through socket handover from exiting
-instances to new starting instance.
+  instances to new starting instance.
 - Configurable custom coinbase signature.
 - Configurable instant starting and minimum difficulty.
 - Rapid vardiff adjustment with stable unlimited maximum difficulty handling.
 - New work generation on block changes incorporate full bitcoind transaction
-set without delay or requiring to send transactionless work to miners thereby
-providing the best bitcoin network support and rewarding miners with the most
-transaction fees.
+  set without delay or requiring to send transactionless work to miners thereby
+  providing the best bitcoin network support and rewarding miners with the most
+  transaction fees.
 - Event driven communication based on communication readiness preventing
-slow communicating clients from delaying low latency ones.
+  slow communicating clients from delaying low latency ones.
 - Stratum messaging system to running clients.
 - Accurate pool and per client statistics.
 - Multiple named instances can be run concurrently on the same machine.
-- SPLNS payout scheme
+- SPLNS payout scheme (payout directly to users for each block found)
 
 
 ---
@@ -242,7 +242,7 @@ redirecting to the same pool.
 
 -S <DB-SOCKDIR> tells asicseer-pool which directory to look for the asicseer-db
 socket to talk to.
-This option does not exist when built without ckdb support.
+This option does not exist when built without asicseer-db support.
 
 -s <SOCKDIR> tells asicseer-pool which directory to place its own communication
 sockets (/tmp by default)
@@ -264,7 +264,7 @@ asicseer-db takes the following options:
 -l LOGLEVEL | --loglevel LOGLEVEL
 -n NAME | --name NAME
 -p DBPASS | --dbpass DBPASS
--r POOL-LOGDIR | --pool-logdir CKPOOL-LOGDIR
+-r POOL-LOGDIR | --pool-logdir POOL-LOGDIR
 -R LOGDIR | --logdir LOGDIR
 -s SOCKDIR | --sockdir SOCKDIR
 -u DBUSER | --dbuser DBUSER
@@ -278,22 +278,22 @@ ckpmsg and notifier support the -n, -p and -s options
 ---
 CONFIGURATION
 
-At least one bitcoind is mandatory in ckpool mode with the minimum requirements
-of server, rpcuser and rpcpassword set.
+At least one bitcoind is mandatory in asicseer-pool mode with the minimum
+requirements of server, rpcuser and rpcpassword set.
 
-Ckpool takes a json encoded configuration file in ckpool.conf by default or
-ckproxy.conf in proxy or passthrough mode unless specified with -c. Sample
-configurations for ckpool and ckproxy are included with the source. Entries
-after the valid json are ignored and the space there can be used for comments.
-The options recognised are as follows:
+asicseer-pool takes a json encoded configuration file in asicseer-pool.conf by
+default or asicseer-proxy.conf in proxy or passthrough mode unless specified
+with -c. Sample configurations for asicseer-pool and asicseer-proxy are
+included with the source. Entries after the valid json are ignored and the
+space there can be used for comments. The options recognised are as follows:
 
 
 "btcd" : This is an array of bitcoind(s) with the options url, auth  and pass
 which match the configured bitcoind. The optional boolean field notify tells
-ckpool this btcd is using the notifier and does not need to be polled for block
-changes. If no btcd is specified, ckpool will look for one on localhost:8332
-with the username "user" and password "pass". This maintainers of this software
-recommend BCHN as the bitcoind node implementation to use.
+asicseer-pool this btcd is using the notifier and does not need to be polled
+for block changes. If no btcd is specified, asicseer-pool will look for one on
+localhost:8332 with the username "user" and password "pass". This maintainers
+of this software recommend BCHN as the bitcoind node implementation to use.
 
 "proxy" : This is an array in the same format as btcd above but is used in
 proxy and passthrough mode to set the upstream pool and is mandatory.
@@ -335,14 +335,14 @@ the health of the bitcoin network.
 for a client to alter and is expressed as an hex string. Eg "00fff000"
 Default is "1fffe000".
 
-"serverurl" : This is the IP(s) to try to bind ckpool uniquely to, otherwise it
-will attempt to bind to all interfaces in port 3333 by default in pool mode
-and 3334 in proxy mode. Multiple entries can be specified as an array by
-either IP or resolvable domain name but the executable must be able to bind to
-all of them and ports up to 1024 usually require privileged access.
+"serverurl" : This is the IP(s) to try to bind asicseer-pool uniquely to,
+otherwise it will attempt to bind to all interfaces in port 3333 by default in
+pool mode and 3334 in proxy mode. Multiple entries can be specified as an array
+by either IP or resolvable domain name but the executable must be able to bind
+to all of them and ports up to 1024 usually require privileged access.
 
-"redirecturl" : This is an array of URLs that ckpool will redirect active
-miners to in redirector mode. They must be valid resolvable URLs+ports.
+"redirecturl" : This is an array of URLs that asicseer-pool will redirect
+active miners to in redirector mode. They must be valid resolvable URLs+ports.
 
 "mindiff" : Minimum diff that vardiff will allow miners to drop to. Default 1
 
@@ -367,5 +367,5 @@ as of the time of this writing).
 
 "logdir" : Which directory to store pool and client logs. Default "logs"
 
-"maxclients" : Optional upper limit on the number of clients ckpool will
+"maxclients" : Optional upper limit on the number of clients asicseer-pool will
 accept before rejecting further clients.
