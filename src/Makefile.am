@@ -38,8 +38,8 @@ summariser_SOURCES = summariser.c
 summariser_LDADD = libckpool.a @JANSSON_LIBS@
 
 if WANT_ASICSEER_DB
-bin_PROGRAMS += ckdb
-ckdb_SOURCES = ckdb.c ckdb_cmd.c ckdb_data.c ckdb_dbio.c ckdb_btc.c \
+bin_PROGRAMS += asicseer-db
+asicseer_db_SOURCES = ckdb.c ckdb_cmd.c ckdb_data.c ckdb_dbio.c ckdb_btc.c \
 		ckdb_crypt.c ckdb.h klist.c ktree.c klist.h ktree.h
-ckdb_LDADD = libckpool.a @JANSSON_LIBS@ @LIBS@
+asicseer_db_LDADD = libckpool.a @JANSSON_LIBS@ @LIBS@
 endif
