@@ -1549,7 +1549,7 @@ static void update_txns(pool_t *ckp, sdata_t *sdata, txntable_t *txns, bool loca
 /* Distill down a set of transactions into an efficient tree arrangement for
  * stratum messages and fast work assembly. */
 static txntable_t *wb_merkle_bin_txns(pool_t *ckp, sdata_t *sdata, workbase_t *wb,
-				      json_t *txn_array, bool local)
+                                      json_t *txn_array, bool local)
 {
 	long i, j, binleft, binlen;
 	txntable_t *txns = NULL;
