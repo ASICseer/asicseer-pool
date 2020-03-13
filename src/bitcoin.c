@@ -63,7 +63,7 @@ bool validate_address(connsock_t *cs, const char *address, bool *script)
 	if (unlikely(!tmp_val)) {
 		/* All recent bitcoinds with wallet support built in should
 		 * support this, if not, quit here to keep things simple. */
-		quit(1, "No isscript support from bitcoind");
+		quit(1, "No isscript support from bitcoind -- please use a bitcoind with wallet support.");
 	}
 	*script = json_is_true(tmp_val);
 	LOGDEBUG("Bitcoin address %s IS valid%s", address, *script ? " script" : "");
