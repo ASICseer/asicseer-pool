@@ -4858,7 +4858,7 @@ static void ckdbq_flush(sdata_t *sdata)
 	}
 	mutex_unlock(ckdbq->lock);
 
-	LOGWARNING("Flushed %d messages from asicseer-db queue", flushed);
+	LOGWARNING("Flushed %d messages from "DB_PROGNAME" queue", flushed);
 }
 
 static void stratum_loop(pool_t *ckp, proc_instance_t *pi)
@@ -5925,18 +5925,18 @@ static int send_recv_auth(stratum_instance_t *client)
 		json_t *val = NULL;
 		int offset = 0;
 
-		LOGINFO("Got asicseer-db response: %s", buf);
+		LOGINFO("Got "DB_PROGNAME" response: %s", buf);
 		response = alloca(responselen);
 		memset(response, 0, responselen);
 		if (unlikely(sscanf(buf, "%*d.%*d.%c%n", response, &offset) < 1)) {
-			LOGWARNING("Got1 unparseable asicseer-db auth response: %s", buf);
+			LOGWARNING("Got1 unparseable "DB_PROGNAME" auth response: %s", buf);
 			goto out_fail;
 		}
 		strcpy(response+1, buf+offset);
 		if (!strchr(response, '=')) {
 			if (cmdmatch(response, "failed"))
 				goto out;
-			LOGWARNING("Got2 unparseable asicseer-db auth response: %s", buf);
+			LOGWARNING("Got2 unparseable "DB_PROGNAME" auth response: %s", buf);
 			goto out_fail;
 		}
 		cmd = response;
@@ -5967,12 +5967,12 @@ static int send_recv_auth(stratum_instance_t *client)
 		goto out;
 	}
 	if (contended)
-		LOGWARNING("Prolonged lock contention for asicseer-db while trying to authorise");
+		LOGWARNING("Prolonged lock contention for "DB_PROGNAME" while trying to authorise");
 	else {
 		if (!sdata->ckdb_offline)
-			LOGWARNING("Got no auth response from asicseer-db :(");
+			LOGWARNING("Got no auth response from "DB_PROGNAME" :(");
 		else
-			LOGNOTICE("No auth response for %s from offline asicseer-db", user->username);
+			LOGNOTICE("No auth response for %s from offline "DB_PROGNAME, user->username);
 	}
 out_fail:
 	ret = -1;
@@ -8283,7 +8283,7 @@ static void parse_ckdb_cmd(pool_t *ckp, const char *cmd)
 
 	val = json_loads(cmd, 0, &err_val);
 	if (unlikely(!val)) {
-		LOGWARNING("ASICSEER-DB MSG %s JSON decode failed(%d): %s", cmd, err_val.line, err_val.text);
+		LOGWARNING(DB_PROGNAME" MSG %s JSON decode failed(%d): %s", cmd, err_val.line, err_val.text);
 		return;
 	}
 	res_val = json_object_get(val, "diffchange");
@@ -8339,13 +8339,13 @@ static void ckdbq_process(pool_t *ckp, char *msg)
 
 		if (unlikely(!buf)) {
 			if (!test_and_set(&sdata->ckdb_offline, &sdata->ckdb_lock))
-				LOGWARNING("Failed to talk to asicseer-db, queueing messages");
+				LOGWARNING("Failed to talk to "DB_PROGNAME", queueing messages");
 			sleep(5);
 		}
 	}
 	free(msg);
 	if (test_and_clear(&sdata->ckdb_offline, &sdata->ckdb_lock))
-		LOGWARNING("Successfully resumed talking to asicseer-db");
+		LOGWARNING("Successfully resumed talking to "DB_PROGNAME);
 
 	/* Process any requests from asicseer-db that are heartbeat responses with
 	 * specific requests. */
@@ -8362,15 +8362,15 @@ static void ckdbq_process(pool_t *ckp, char *msg)
 
 				cmd = response;
 				strsep(&cmd, ".");
-				LOGDEBUG("Got asicseer-db response: %s cmd %s", response, cmd);
+				LOGDEBUG("Got "DB_PROGNAME" response: %s cmd %s", response, cmd);
 				if (cmdmatch(cmd, "heartbeat=")) {
 					strsep(&cmd, "=");
 					parse_ckdb_cmd(ckp, cmd);
 				}
 			} else
-				LOGWARNING("Got asicseer-db failure response: %s", buf);
+				LOGWARNING("Got "DB_PROGNAME" failure response: %s", buf);
 		} else
-			LOGWARNING("Got bad asicseer-db response: %s", buf);
+			LOGWARNING("Got bad "DB_PROGNAME" response: %s", buf);
 	}
 	free(buf);
 }
@@ -8489,7 +8489,7 @@ static void update_workerstats(pool_t *ckp, sdata_t *sdata)
 	ts_t ts_now;
 
 	if (sdata->ckdb_offline) {
-		LOGDEBUG("Not queueing workerstats due to asicseer-db offline");
+		LOGDEBUG("Not queueing workerstats due to "DB_PROGNAME" offline");
 		return;
 	}
 
@@ -9335,7 +9335,7 @@ static void *ckdb_heartbeat(void *arg)
 
 		cksleep_ms(1000);
 		if (unlikely(!ckmsgq_empty(sdata->ckdbq))) {
-			LOGDEBUG("Witholding heartbeat due to asicseer-db messages being queued");
+			LOGDEBUG("Witholding heartbeat due to "DB_PROGNAME" messages being queued");
 			continue;
 		}
 		ts_realtime(&ts_now);
