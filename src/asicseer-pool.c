@@ -1636,7 +1636,7 @@ static void prepare_child(pool_t *ckp, proc_instance_t *pi, void *process, char 
 	create_unix_receiver(pi);
 }
 
-#ifdef USE_CKDB
+#ifdef USE_ASICSEER_DB
 static struct option long_options[] = {
 	{"standalone",	no_argument,		0,	'A'},
 	{"config",	required_argument,	0,	'c'},

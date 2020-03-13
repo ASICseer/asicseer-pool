@@ -359,7 +359,7 @@ static const char __maybe_unused *stratum_msgs[] = {
 	""
 };
 
-#ifdef USE_CKDB
+#ifdef USE_ASICSEER_DB
 #define CKP_STANDALONE(CKP) ((CKP)->standalone == true)
 #else
 #define CKP_STANDALONE(CKP) ((CKP) == (CKP)) /* Always true, silences unused warn */
